@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post an Item — KWASUMarket</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:    #1A6B3C;
+      --green-lt: #2A8F52;
+      --gold:     #E8A020;
+      --sand:     #FDF6EC;
+      --ink:      #0F1A14;
+      --muted:    #6B7B72;
+      --white:    #FFFFFF;
+      --card-bg:  #F4FAF6;
+      --border:   #D6E8DC;
+      --red:      #D94040;
+      --red-lt:   #FFF0F0;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--sand); color: var(--ink); line-height: 1.6; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--green);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw; height: 60px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.18);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 800;
+      color: var(--white); letter-spacing: -.5px; text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,.82); text-decoration: none; font-size: .875rem; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a.active { color: var(--gold); }
+    .nav-cta {
+      background: var(--gold); color: var(--ink) !important;
+      padding: .4rem 1.1rem; border-radius: 6px;
+      font-weight: 600 !important; font-size: .85rem !important;
+    }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 22px; height: 2px; background: var(--white); border-radius: 2px; transition: transform .2s, opacity .2s; }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background: var(--green);
+      padding: 3rem 5vw 2.5rem;
+    }
+    .breadcrumb {
+      font-size: .78rem; color: rgba(255,255,255,.55);
+      margin-bottom: .8rem; display: flex; align-items: center; gap: .4rem; flex-wrap: wrap;
+    }
+    .breadcrumb a { color: rgba(255,255,255,.55); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--gold); }
+    .breadcrumb span { color: rgba(255,255,255,.3); }
+    .page-header h1 {
+      font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800; color: var(--white); letter-spacing: 0;
+      line-height: 1.25; margin-bottom: .4rem;
+    }
+    .page-header p { color: rgba(255,255,255,.65); font-size: .95rem; }
+
+    /* ── LAYOUT ── */
+    .post-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 2rem;
+      padding: 2.5rem 5vw 5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* ── FORM CARD ── */
+    .form-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem 2rem;
+    }
+
+    .form-section {
+      padding-bottom: 2rem;
+      margin-bottom: 2rem;
+      border-bottom: 1.5px solid var(--border);
+    }
+    .form-section:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+    .form-section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem; font-weight: 700; color: var(--ink);
+      margin-bottom: 1.3rem;
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .form-section-title span {
+      width: 26px; height: 26px;
+      background: var(--green); color: var(--white);
+      border-radius: 50%; font-size: .75rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Inter', sans-serif;
+      flex-shrink: 0;
+    }
+
+    /* ── CATEGORY PICKER ── */
+    .cat-picker {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: .6rem;
+    }
+    .cat-btn {
+      border: 1.5px solid var(--border);
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: .75rem .5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .15s;
+      display: flex; flex-direction: column; align-items: center; gap: .35rem;
+    }
+    .cat-btn:hover { border-color: var(--green); background: var(--white); }
+    .cat-btn.selected { border-color: var(--green); background: var(--green); }
+    .cat-btn.selected .cat-btn-icon { filter: none; }
+    .cat-btn.selected .cat-btn-label { color: var(--white); }
+    .cat-btn-icon { font-size: 1.6rem; }
+    .cat-btn-label { font-size: .75rem; font-weight: 600; color: var(--ink); }
+
+    /* ── FORM FIELDS ── */
+    .field { margin-bottom: 1.3rem; }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block; font-size: .82rem; font-weight: 600;
+      color: var(--ink); margin-bottom: .4rem;
+    }
+    .field label .req { color: var(--red); margin-left: 2px; }
+    .field label .hint { font-weight: 400; color: var(--muted); font-size: .78rem; margin-left: .3rem; }
+
+    .field input, .field textarea, .field select {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: .75rem 1rem;
+      font-size: .925rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--ink);
+      background: var(--white);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      appearance: none;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(26,107,60,.08);
+    }
+    .field input.error, .field textarea.error, .field select.error {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(217,64,64,.08);
+    }
+    .field textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+    .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7B72' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; cursor: pointer; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .price-input-wrap { position: relative; }
+    .price-input-wrap input { padding-left: 2.2rem; }
+    .price-symbol {
+      position: absolute; left: .9rem; top: 50%; transform: translateY(-50%);
+      font-weight: 600; color: var(--muted); font-size: .9rem; pointer-events: none;
+    }
+
+    .char-count {
+      text-align: right; font-size: .73rem;
+      color: var(--muted); margin-top: .3rem;
+    }
+    .char-count.warn { color: var(--gold); }
+    .char-count.over { color: var(--red); }
+
+    .field-error {
+      font-size: .75rem; color: var(--red);
+      margin-top: .3rem; display: none;
+    }
+    .field-error.show { display: block; }
+
+    /* phone input */
+    .phone-wrap { display: flex; }
+    .phone-prefix {
+      display: flex; align-items: center;
+      background: var(--card-bg); border: 1.5px solid var(--border);
+      border-right: none; border-radius: 10px 0 0 10px;
+      padding: 0 .9rem; font-size: .9rem; color: var(--muted);
+      font-weight: 600; white-space: nowrap;
+    }
+    .phone-wrap input { border-radius: 0 10px 10px 0; }
+
+    /* ── IMAGE UPLOAD ── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      background: var(--card-bg);
+      position: relative;
+    }
+    .upload-zone:hover, .upload-zone.drag { border-color: var(--green); background: #EEF7F2; }
+    .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .upload-icon { font-size: 2.2rem; margin-bottom: .6rem; display: block; }
+    .upload-zone p { font-size: .875rem; color: var(--muted); line-height: 1.5; }
+    .upload-zone strong { color: var(--green); }
+
+    .image-previews {
+      display: flex; gap: .6rem; flex-wrap: wrap; margin-top: 1rem;
+    }
+    .preview-thumb {
+      width: 72px; height: 72px; border-radius: 8px;
+      background: var(--card-bg); border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; position: relative; overflow: hidden;
+    }
+    .preview-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .preview-thumb .remove-img {
+      position: absolute; top: 2px; right: 2px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--red); color: var(--white);
+      border: none; cursor: pointer; font-size: .7rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ── SUBMIT BTN ── */
+    .submit-btn {
+      width: 100%; background: var(--green); color: var(--white);
+      border: none; border-radius: 10px; padding: 1rem;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background .2s, transform .15s;
+      margin-top: 1.5rem;
+      display: flex; align-items: center; justify-content: center; gap: .6rem;
+    }
+    .submit-btn:hover { background: var(--green-lt); transform: translateY(-1px); }
+    .submit-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    /* ── SIDEBAR ── */
+    .post-sidebar { display: flex; flex-direction: column; gap: 1.2rem; }
+
+    .sidebar-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 1.3rem 1.2rem;
+    }
+    .sidebar-card-title {
+      font-size: .78rem; font-weight: 700; letter-spacing: .07em;
+      text-transform: uppercase; color: var(--green);
+      margin-bottom: 1rem;
+    }
+
+    /* preview card */
+    .preview-card {
+      border-radius: 12px; overflow: hidden;
+      border: 1.5px solid var(--border);
+    }
+    .preview-img {
+      height: 130px; background: var(--card-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem;
+    }
+    .preview-body { padding: .85rem 1rem 1rem; }
+    .preview-cat { font-size: .7rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .25rem; }
+    .preview-name { font-weight: 600; font-size: .9rem; color: var(--ink); margin-bottom: .25rem; line-height: 1.35; }
+    .preview-seller { font-size: .75rem; color: var(--muted); margin-bottom: .7rem; }
+    .preview-footer { display: flex; align-items: center; justify-content: space-between; }
+    .preview-price { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--green); }
+    .preview-cond { font-size: .7rem; color: var(--muted); border: 1px solid var(--border); padding: .1rem .45rem; border-radius: 4px; }
+
+    /* tips */
+    .tip-list { display: flex; flex-direction: column; gap: .8rem; }
+    .tip-item { display: flex; gap: .7rem; align-items: flex-start; font-size: .82rem; color: var(--ink); line-height: 1.5; }
+    .tip-icon { font-size: 1rem; flex-shrink: 0; margin-top: .05rem; }
+
+    /* safety */
+    .safety-list { display: flex; flex-direction: column; gap: .6rem; }
+    .safety-item { display: flex; gap: .6rem; font-size: .8rem; color: var(--muted); line-height: 1.5; }
+    .safety-item::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+    /* ── SUCCESS SCREEN ── */
+    .success-screen {
+      display: none;
+      text-align: center; padding: 3rem 2rem;
+    }
+    .success-screen.show { display: block; }
+    .success-icon { font-size: 4rem; margin-bottom: 1rem; display: block; animation: pop .4s ease; }
+    @keyframes pop { 0% { transform: scale(.5); opacity: 0; } 80% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+    .success-screen h2 { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: .6rem; }
+    .success-screen p { color: var(--muted); max-width: 340px; margin: 0 auto 1.8rem; line-height: 1.65; }
+    .success-actions { display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap; }
+    .btn-green { background: var(--green); color: var(--white); padding: .7rem 1.4rem; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: .9rem; }
+    .btn-outline { border: 1.5px solid var(--border); color: var(--ink); padding: .7rem 1.4rem; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: .9rem; background: var(--white); cursor: pointer; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      .post-layout { grid-template-columns: 1fr; }
+      .post-sidebar { order: -1; }
+      .sidebar-card.tips-card, .sidebar-card.safety-card { display: none; }
+    }
+    @media (max-width: 600px) {
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; right: 0; background: var(--green); padding: 1rem 5vw 1.5rem; gap: 1rem; z-index: 99; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+      .field-row { grid-template-columns: 1fr; }
+      .cat-picker { grid-template-columns: repeat(4, 1fr); }
+      .form-card { padding: 1.3rem 1rem; }
+      .post-layout { padding: 1.5rem 4vw 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="kwasu-marketplace.html" class="nav-logo">KWASU<span>Market</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="kwasu-marketplace.html#categories">Browse</a></li>
+      <li><a href="kwasu-listings.html">Listings</a></li>
+      <li><a href="kwasu-marketplace.html#how">How it works</a></li>
+      <li><a href="kwasu-post.html" class="nav-cta active">Post an Item</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="breadcrumb">
+      <a href="kwasu-marketplace.html">Home</a>
+      <span>›</span>
+      <span>Post an Item</span>
+    </div>
+    <h1>Post an Item</h1>
+    <p>It's free. Takes under 2 minutes. Reaches every KWASU student.</p>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="post-layout">
+
+    <!-- FORM -->
+    <div class="form-card" id="formCard">
+
+      <!-- SUCCESS -->
+      <div class="success-screen" id="successScreen">
+        <span class="success-icon">🎉</span>
+        <h2>Your listing is live!</h2>
+        <p>Students can now find your item on KWASUMarket. They'll reach you directly on WhatsApp.</p>
+        <div class="success-actions">
+          <a href="kwasu-listings.html" class="btn-green">View all listings</a>
+          <button class="btn-outline" onclick="resetForm()">Post another item</button>
+        </div>
+      </div>
+
+      <!-- FORM CONTENT -->
+      <div id="formContent">
+
+        <!-- STEP 1: CATEGORY -->
+        <div class="form-section">
+          <div class="form-section-title"><span>1</span> What are you listing?</div>
+          <div class="cat-picker" id="catPicker">
+            <div class="cat-btn" onclick="selectCat(this, 'Gadgets')">
+              <span class="cat-btn-icon">💻</span>
+              <span class="cat-btn-label">Gadgets</span>
+            </div>
+            <div class="cat-btn" onclick="selectCat(this, 'Food')">
+              <span class="cat-btn-icon">🍛</span>
+              <span class="cat-btn-label">Food</span>
+            </div>
+            <div class="cat-btn" onclick="selectCat(this, 'Services')">
+              <span class="cat-btn-icon">🛠</span>
+              <span class="cat-btn-label">Services</span>
+            </div>
+            <div class="cat-btn" onclick="selectCat(this, 'Clothing')">
+              <span class="cat-btn-icon">👗</span>
+              <span class="cat-btn-label">Clothing</span>
+            </div>
+            <div class="cat-btn" onclick="selectCat(this, 'Hostel')">
+              <span class="cat-btn-icon">🏠</span>
+              <span class="cat-btn-label">Hostel</span>
+            </div>
+            <div class="cat-btn" onclick="selectCat(this, 'Printing')">
+              <span class="cat-btn-icon">🖨</span>
+              <span class="cat-btn-label">Printing</span>
+            </div>
+            <div class="cat-btn" onclick="selectCat(this, 'Tutoring')">
+              <span class="cat-btn-icon">✏️</span>
+              <span class="cat-btn-label">Tutoring</span>
+            </div>
+            <div class="cat-btn" onclick="selectCat(this, 'Other')">
+              <span class="cat-btn-icon">📦</span>
+              <span class="cat-btn-label">Other</span>
+            </div>
+          </div>
+          <div class="field-error" id="catError">Please select a category.</div>
+        </div>
+
+        <!-- STEP 2: DETAILS -->
+        <div class="form-section">
+          <div class="form-section-title"><span>2</span> Item details</div>
+
+          <div class="field">
+            <label for="itemTitle">Title <span class="req">*</span> <span class="hint">Be specific — e.g. "HP Laptop 8GB RAM" not just "Laptop"</span></label>
+            <input type="text" id="itemTitle" placeholder="e.g. Samsung Galaxy A14 — 64GB" maxlength="80" oninput="updatePreview(); countChars('itemTitle','titleCount',80)" />
+            <div class="char-count" id="titleCount">0 / 80</div>
+            <div class="field-error" id="titleError">Please enter a title.</div>
+          </div>
+
+          <div class="field">
+            <label for="itemDesc">Description <span class="req">*</span></label>
+            <textarea id="itemDesc" placeholder="Describe the item — condition, features, what's included, reason for selling…" maxlength="500" oninput="countChars('itemDesc','descCount',500)"></textarea>
+            <div class="char-count" id="descCount">0 / 500</div>
+            <div class="field-error" id="descError">Please write a short description.</div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="itemPrice">Price (₦) <span class="req">*</span></label>
+              <div class="price-input-wrap">
+                <span class="price-symbol">₦</span>
+                <input type="number" id="itemPrice" placeholder="0" min="0" oninput="updatePreview()" />
+              </div>
+              <div class="field-error" id="priceError">Please enter a price.</div>
+            </div>
+            <div class="field">
+              <label for="itemCondition">Condition <span class="req">*</span></label>
+              <select id="itemCondition" onchange="updatePreview()">
+                <option value="">Select condition</option>
+                <option>Brand new</option>
+                <option>Like new</option>
+                <option>Good</option>
+                <option>Fairly used</option>
+                <option>Fresh</option>
+                <option>Per session</option>
+                <option>Per job</option>
+                <option>Per page</option>
+                <option>Per hour</option>
+              </select>
+              <div class="field-error" id="condError">Please select a condition.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: PHOTO -->
+        <div class="form-section">
+          <div class="form-section-title"><span>3</span> Add a photo <span style="font-weight:400; color:var(--muted); font-size:.85rem;">(optional but recommended)</span></div>
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="photoInput" accept="image/*" multiple onchange="handleImages(this)" />
+            <span class="upload-icon">📷</span>
+            <p><strong>Tap to upload</strong> or drag and drop<br>JPG, PNG — up to 3 photos</p>
+          </div>
+          <div class="image-previews" id="imagePreviews"></div>
+        </div>
+
+        <!-- STEP 4: CONTACT -->
+        <div class="form-section">
+          <div class="form-section-title"><span>4</span> Your contact info</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="sellerName">Your name <span class="req">*</span></label>
+              <input type="text" id="sellerName" placeholder="e.g. Mustapha A." oninput="updatePreview()" />
+              <div class="field-error" id="nameError">Please enter your name.</div>
+            </div>
+            <div class="field">
+              <label for="sellerDept">Department <span class="hint">(optional)</span></label>
+              <select id="sellerDept" onchange="updatePreview()">
+                <option value="">Select department</option>
+                <option>Finance</option>
+                <option>Engineering</option>
+                <option>Mass Comm</option>
+                <option>Law</option>
+                <option>Sciences</option>
+                <option>Education</option>
+                <option>Arts</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="sellerPhone">WhatsApp number <span class="req">*</span></label>
+            <div class="phone-wrap">
+              <div class="phone-prefix">🇳🇬 +234</div>
+              <input type="tel" id="sellerPhone" placeholder="080 XXXX XXXX" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')" />
+            </div>
+            <div class="field-error" id="phoneError">Please enter a valid 11-digit Nigerian number.</div>
+          </div>
+        </div>
+
+        <!-- SUBMIT -->
+        <button class="submit-btn" id="submitBtn" onclick="submitForm()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Post listing — it's free
+        </button>
+
+      </div><!-- end formContent -->
+    </div><!-- end form-card -->
+
+    <!-- SIDEBAR -->
+    <aside class="post-sidebar">
+
+      <!-- LIVE PREVIEW -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">Live preview</div>
+        <div class="preview-card">
+          <div class="preview-img" id="previewImg">📦</div>
+          <div class="preview-body">
+            <div class="preview-cat" id="previewCat">Category</div>
+            <div class="preview-name" id="previewName">Your item title will appear here</div>
+            <div class="preview-seller" id="previewSeller">👤 Your name · Department</div>
+            <div class="preview-footer">
+              <span class="preview-price" id="previewPrice">₦ —</span>
+              <span class="preview-cond" id="previewCond">Condition</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIPS -->
+      <div class="sidebar-card tips-card">
+        <div class="sidebar-card-title">Tips for a great listing</div>
+        <div class="tip-list">
+          <div class="tip-item"><span class="tip-icon">📸</span> Add a clear photo — listings with photos get 3× more views.</div>
+          <div class="tip-item"><span class="tip-icon">💬</span> Be specific in your title — include brand, model, or size.</div>
+          <div class="tip-item"><span class="tip-icon">💰</span> Price fairly — check what similar items sell for on campus.</div>
+          <div class="tip-item"><span class="tip-icon">⚡</span> Respond fast — buyers move on quickly.</div>
+        </div>
+      </div>
+
+      <!-- SAFETY -->
+      <div class="sidebar-card safety-card">
+        <div class="sidebar-card-title">Stay safe on campus</div>
+        <div class="safety-list">
+          <div class="safety-item">Meet buyers in public places — library, SUB, or lecture areas.</div>
+          <div class="safety-item">Don't share personal details beyond your WhatsApp number.</div>
+          <div class="safety-item">Collect payment before handing over the item.</div>
+          <div class="safety-item">Trust your gut — cancel if something feels off.</div>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+  <script>
+    let selectedCategory = '';
+    const CAT_EMOJIS = { Gadgets:'💻', Food:'🍛', Services:'🛠', Clothing:'👗', Hostel:'🏠', Printing:'🖨', Tutoring:'✏️', Other:'📦' };
+
+    function toggleNav() {
+      document.getElementById('navLinks').classList.toggle('open');
+      document.getElementById('hamburger').classList.toggle('open');
+    }
+
+    function selectCat(el, cat) {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedCategory = cat;
+      document.getElementById('catError').classList.remove('show');
+      updatePreview();
+    }
+
+    function countChars(inputId, countId, max) {
+      const len = document.getElementById(inputId).value.length;
+      const el = document.getElementById(countId);
+      el.textContent = `${len} / ${max}`;
+      el.className = 'char-count' + (len > max * .9 ? (len >= max ? ' over' : ' warn') : '');
+    }
+
+    function updatePreview() {
+      const title = document.getElementById('itemTitle').value.trim() || 'Your item title will appear here';
+      const price = document.getElementById('itemPrice').value;
+      const cond  = document.getElementById('itemCondition').value || 'Condition';
+      const name  = document.getElementById('sellerName').value.trim() || 'Your name';
+      const dept  = document.getElementById('sellerDept').value;
+      const cat   = selectedCategory || 'Category';
+      const emoji = CAT_EMOJIS[selectedCategory] || '📦';
+
+      document.getElementById('previewImg').textContent  = emoji;
+      document.getElementById('previewCat').textContent  = cat;
+      document.getElementById('previewName').textContent = title;
+      document.getElementById('previewSeller').textContent = `👤 ${name}${dept ? ' · ' + dept : ''}`;
+      document.getElementById('previewPrice').textContent  = price ? '₦' + Number(price).toLocaleString() : '₦ —';
+      document.getElementById('previewCond').textContent   = cond;
+    }
+
+    function handleImages(input) {
+      const container = document.getElementById('imagePreviews');
+      const files = [...input.files].slice(0, 3);
+      container.innerHTML = '';
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const thumb = document.createElement('div');
+          thumb.className = 'preview-thumb';
+          thumb.innerHTML = `<img src="${e.target.result}" alt="preview" /><button class="remove-img" onclick="this.parentElement.remove()">×</button>`;
+          container.appendChild(thumb);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // drag & drop
+    const zone = document.getElementById('uploadZone');
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.classList.remove('drag');
+      const dt = e.dataTransfer;
+      if (dt.files.length) handleImages({ files: dt.files });
+    });
+
+    function validate() {
+      let ok = true;
+
+      if (!selectedCategory) {
+        document.getElementById('catError').classList.add('show'); ok = false;
+      }
+
+      const title = document.getElementById('itemTitle');
+      const titleErr = document.getElementById('titleError');
+      if (!title.value.trim()) { title.classList.add('error'); titleErr.classList.add('show'); ok = false; }
+      else { title.classList.remove('error'); titleErr.classList.remove('show'); }
+
+      const desc = document.getElementById('itemDesc');
+      const descErr = document.getElementById('descError');
+      if (!desc.value.trim()) { desc.classList.add('error'); descErr.classList.add('show'); ok = false; }
+      else { desc.classList.remove('error'); descErr.classList.remove('show'); }
+
+      const price = document.getElementById('itemPrice');
+      const priceErr = document.getElementById('priceError');
+      if (!price.value || Number(price.value) < 0) { price.classList.add('error'); priceErr.classList.add('show'); ok = false; }
+      else { price.classList.remove('error'); priceErr.classList.remove('show'); }
+
+      const cond = document.getElementById('itemCondition');
+      const condErr = document.getElementById('condError');
+      if (!cond.value) { cond.classList.add('error'); condErr.classList.add('show'); ok = false; }
+      else { cond.classList.remove('error'); condErr.classList.remove('show'); }
+
+      const name = document.getElementById('sellerName');
+      const nameErr = document.getElementById('nameError');
+      if (!name.value.trim()) { name.classList.add('error'); nameErr.classList.add('show'); ok = false; }
+      else { name.classList.remove('error'); nameErr.classList.remove('show'); }
+
+      const phone = document.getElementById('sellerPhone');
+      const phoneErr = document.getElementById('phoneError');
+      const phoneVal = phone.value.replace(/\D/g,'');
+      if (phoneVal.length !== 11 || !phoneVal.startsWith('0')) { phone.classList.add('error'); phoneErr.classList.add('show'); ok = false; }
+      else { phone.classList.remove('error'); phoneErr.classList.remove('show'); }
+
+      return ok;
+    }
+
+    function submitForm() {
+      if (!validate()) {
+        document.querySelector('.field-error.show, #catError.show')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Posting…';
+
+      // Simulate a short save delay then show success
+      setTimeout(() => {
+        document.getElementById('formContent').style.display = 'none';
+        document.getElementById('successScreen').classList.add('show');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 900);
+    }
+
+    function resetForm() {
+      document.getElementById('formContent').style.display = 'block';
+      document.getElementById('successScreen').classList.remove('show');
+      document.getElementById('submitBtn').disabled = false;
+      document.getElementById('submitBtn').innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Post listing — it's free`;
+      // reset fields
+      ['itemTitle','itemDesc','itemPrice','sellerName','sellerPhone'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('itemCondition').value = '';
+      document.getElementById('sellerDept').value = '';
+      document.getElementById('imagePreviews').innerHTML = '';
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+      selectedCategory = '';
+      updatePreview();
+    }
+  </script>
+
+</body>
+</html>

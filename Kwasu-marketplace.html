@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KWASU Marketplace — Buy, Sell & Connect on Campus</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:    #1A6B3C;
+      --green-lt: #2A8F52;
+      --gold:     #E8A020;
+      --sand:     #FDF6EC;
+      --ink:      #0F1A14;
+      --muted:    #6B7B72;
+      --white:    #FFFFFF;
+      --card-bg:  #F4FAF6;
+      --border:   #D6E8DC;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--white);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--green);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw;
+      height: 60px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.18);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.25rem; font-weight: 800;
+      color: var(--white); letter-spacing: -.5px;
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-links {
+      display: flex; gap: 2rem; list-style: none;
+    }
+    .nav-links a {
+      color: rgba(255,255,255,.82);
+      text-decoration: none; font-size: .875rem; font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta {
+      background: var(--gold);
+      color: var(--ink) !important;
+      padding: .4rem 1.1rem;
+      border-radius: 6px;
+      font-weight: 600 !important;
+      font-size: .85rem !important;
+      transition: opacity .2s !important;
+    }
+    .nav-cta:hover { opacity: .88; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 22px; height: 2px; background: var(--white); border-radius: 2px; }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--green);
+      padding: 80px 5vw 90px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      min-height: 88vh;
+      position: relative;
+      overflow: hidden;
+    }
+    /* signature element: diagonal gold stripe */
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; right: -60px;
+      width: 340px; height: 340px;
+      background: var(--gold);
+      opacity: .12;
+      border-radius: 50%;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.2);
+      color: var(--gold);
+      font-size: .78rem; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: .3rem .85rem;
+      border-radius: 100px;
+      margin-bottom: 1.4rem;
+    }
+    .hero-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.25;
+      letter-spacing: -.01em;
+      margin-bottom: 1.4rem;
+    }
+    .hero-title em {
+      font-style: normal;
+      color: var(--gold);
+    }
+    .hero-sub {
+      color: rgba(255,255,255,.75);
+      font-size: 1.05rem;
+      line-height: 1.75;
+      max-width: 460px;
+      margin-bottom: 2.5rem;
+    }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--gold);
+      color: var(--ink);
+      padding: .85rem 1.8rem;
+      border-radius: 8px;
+      font-weight: 700; font-size: .95rem;
+      text-decoration: none;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 4px 14px rgba(232,160,32,.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(232,160,32,.5); }
+    .btn-ghost {
+      border: 1.5px solid rgba(255,255,255,.35);
+      color: var(--white);
+      padding: .85rem 1.8rem;
+      border-radius: 8px;
+      font-weight: 600; font-size: .95rem;
+      text-decoration: none;
+      transition: background .2s;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,.08); }
+
+    /* hero stats */
+    .hero-stats {
+      display: flex; gap: 3rem; margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,.12);
+    }
+    .stat-item { }
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem; font-weight: 800;
+      color: var(--white); line-height: 1;
+      margin-bottom: .3rem;
+    }
+    .stat-label {
+      font-size: .78rem; color: rgba(255,255,255,.55);
+      text-transform: uppercase; letter-spacing: .05em;
+    }
+
+    /* hero illustration panel */
+    .hero-visual {
+      display: flex; flex-direction: column; gap: 1rem;
+      position: relative; z-index: 1;
+    }
+    .listing-card-preview {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 1rem 1.2rem;
+      display: flex; align-items: center; gap: 1rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,.18);
+      animation: floatCard 3s ease-in-out infinite;
+    }
+    .listing-card-preview:nth-child(2) { animation-delay: .5s; margin-left: 2rem; }
+    .listing-card-preview:nth-child(3) { animation-delay: 1s; }
+    @keyframes floatCard {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .card-emoji { font-size: 2rem; }
+    .card-info { flex: 1; }
+    .card-title { font-weight: 600; font-size: .9rem; color: var(--ink); }
+    .card-meta { font-size: .78rem; color: var(--muted); }
+    .card-price {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1rem;
+      color: var(--green);
+    }
+    .badge-new {
+      background: var(--gold); color: var(--ink);
+      font-size: .65rem; font-weight: 700;
+      padding: .15rem .5rem; border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    /* ── SEARCH BAR ── */
+    .search-section {
+      background: var(--sand);
+      padding: 2.5rem 5vw;
+      border-bottom: 1px solid var(--border);
+    }
+    .search-wrap {
+      max-width: 700px; margin: 0 auto;
+      display: flex; gap: 0;
+    }
+    .search-wrap input {
+      flex: 1;
+      border: 2px solid var(--border);
+      border-right: none;
+      border-radius: 10px 0 0 10px;
+      padding: .85rem 1.2rem;
+      font-size: 1rem; font-family: 'Inter', sans-serif;
+      outline: none;
+      background: var(--white);
+      color: var(--ink);
+      transition: border-color .2s;
+    }
+    .search-wrap input:focus { border-color: var(--green); }
+    .search-wrap input::placeholder { color: var(--muted); }
+    .search-btn {
+      background: var(--green);
+      color: var(--white);
+      border: none; cursor: pointer;
+      padding: 0 1.6rem;
+      border-radius: 0 10px 10px 0;
+      font-size: .95rem; font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      transition: background .2s;
+    }
+    .search-btn:hover { background: var(--green-lt); }
+    .filter-chips {
+      max-width: 700px; margin: 1rem auto 0;
+      display: flex; gap: .5rem; flex-wrap: wrap;
+    }
+    .chip {
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--ink);
+      padding: .3rem .9rem;
+      border-radius: 100px;
+      font-size: .8rem; font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .chip:hover, .chip.active {
+      background: var(--green); color: var(--white); border-color: var(--green);
+    }
+
+    /* ── CATEGORIES ── */
+    .section { padding: 5.5rem 5vw; }
+    .section-head { margin-bottom: 3rem; }
+    .section-label {
+      font-size: .75rem; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--green);
+      margin-bottom: .6rem;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.7rem, 3vw, 2.3rem);
+      font-weight: 800; color: var(--ink);
+      letter-spacing: 0;
+      line-height: 1.3;
+    }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    .cat-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none;
+    }
+    .cat-card:hover {
+      border-color: var(--green);
+      background: var(--green);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(26,107,60,.15);
+    }
+    .cat-card:hover .cat-name { color: var(--white); }
+    .cat-card:hover .cat-count { color: rgba(255,255,255,.7); }
+    .cat-icon { font-size: 2.2rem; margin-bottom: .7rem; display: block; }
+    .cat-name { font-weight: 600; font-size: .9rem; color: var(--ink); }
+    .cat-count { font-size: .75rem; color: var(--muted); margin-top: .2rem; }
+
+    /* ── LISTINGS ── */
+    .listings-section { background: var(--sand); }
+    .listings-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+    }
+    .view-all {
+      color: var(--green); font-weight: 600; font-size: .875rem;
+      text-decoration: none; border-bottom: 1.5px solid var(--green);
+      padding-bottom: 1px;
+    }
+    .listings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.2rem;
+    }
+    .item-card {
+      background: var(--white);
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .item-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,.1);
+    }
+    .item-img {
+      height: 160px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem;
+      position: relative;
+    }
+    .item-img.bg-books   { background: #EEF7F2; }
+    .item-img.bg-gadgets { background: #EDF3FF; }
+    .item-img.bg-food    { background: #FFF6E8; }
+    .item-img.bg-service { background: #F5EEFF; }
+    .item-badge {
+      position: absolute; top: 10px; left: 10px;
+      background: var(--gold); color: var(--ink);
+      font-size: .65rem; font-weight: 700;
+      padding: .2rem .55rem; border-radius: 5px;
+      text-transform: uppercase;
+    }
+    .item-body { padding: 1.1rem 1.2rem 1.3rem; }
+    .item-cat {
+      font-size: .72rem; font-weight: 600; color: var(--green);
+      text-transform: uppercase; letter-spacing: .06em; margin-bottom: .4rem;
+    }
+    .item-name { font-weight: 600; font-size: .95rem; color: var(--ink); margin-bottom: .4rem; line-height: 1.4; }
+    .item-seller { font-size: .78rem; color: var(--muted); margin-bottom: 1rem; }
+    .item-footer { display: flex; align-items: center; justify-content: space-between; }
+    .item-price {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.15rem; font-weight: 800; color: var(--green);
+    }
+    .item-condition {
+      font-size: .72rem; color: var(--muted);
+      border: 1px solid var(--border);
+      padding: .15rem .55rem; border-radius: 4px;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 2rem;
+    }
+    .how-card {
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .how-icon {
+      width: 56px; height: 56px;
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+    }
+    .how-title { font-weight: 700; font-size: 1.05rem; color: var(--ink); line-height: 1.4; }
+    .how-desc { font-size: .9rem; color: var(--muted); line-height: 1.7; }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      background: var(--green);
+      margin: 0 5vw 5rem;
+      border-radius: 20px;
+      padding: 4rem 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 2rem; flex-wrap: wrap;
+      position: relative; overflow: hidden;
+    }
+    .cta-banner::before {
+      content: '🛒';
+      position: absolute; right: 5%; top: 50%;
+      transform: translateY(-50%);
+      font-size: 8rem; opacity: .08;
+    }
+    .cta-text h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 800; color: var(--white);
+      letter-spacing: 0; line-height: 1.3; margin-bottom: .6rem;
+    }
+    .cta-text p { color: rgba(255,255,255,.75); max-width: 420px; line-height: 1.65; }
+    .cta-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      color: rgba(255,255,255,.6);
+      padding: 3rem 5vw 2rem;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 3rem; margin-bottom: 2.5rem;
+    }
+    .footer-brand .nav-logo { font-size: 1.4rem; display: block; margin-bottom: .8rem; }
+    .footer-brand p { font-size: .875rem; line-height: 1.6; max-width: 260px; }
+    .footer-col h4 {
+      font-size: .8rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--white); margin-bottom: 1rem;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+    .footer-col ul a { color: rgba(255,255,255,.55); text-decoration: none; font-size: .875rem; }
+    .footer-col ul a:hover { color: var(--gold); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.1);
+      padding-top: 1.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-bottom span { font-size: .8rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; padding: 60px 5vw 50px; min-height: auto; }
+      .hero-visual { display: none; }
+      .hero-stats { gap: 1.5rem; }
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; right: 0; background: var(--green); padding: 1rem 5vw 1.5rem; gap: 1rem; z-index: 99; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+      .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+      .hamburger.open span:nth-child(2) { opacity: 0; }
+      .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+      .hamburger span { transition: transform .2s, opacity .2s; }
+      .footer-top { grid-template-columns: 1fr; gap: 2rem; }
+      .cta-banner { text-align: center; justify-content: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .listing-card-preview { animation: none; }
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="kwasu-marketplace.html" class="nav-logo">KWASU<span>Market</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#categories">Browse</a></li>
+      <li><a href="kwasu-listings.html">Listings</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="kwasu-post.html" class="nav-cta">Post an Item</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        📍 Kwara State University, Malete
+      </div>
+      <h1 class="hero-title">
+        Buy. Sell.<br><em>Chop.</em> Get Help.<br>All on Campus.
+      </h1>
+      <p class="hero-sub">
+        The student marketplace built for KWASU. Find course materials, gadgets, food, and services — from people in your own department.
+      </p>
+      <div class="hero-actions">
+        <a href="kwasu-listings.html" class="btn-primary">Browse Listings</a>
+        <a href="kwasu-post.html" class="btn-ghost">Post an Item</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-num">320+</div>
+          <div class="stat-label">Active Listings</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">850+</div>
+          <div class="stat-label">Students</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">4</div>
+          <div class="stat-label">Departments</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating preview cards -->
+    <div class="hero-visual">
+      <div class="listing-card-preview">
+        <span class="card-emoji">🎧</span>
+        <div class="card-info">
+          <div class="card-title">JBL Earbuds — Brand new</div>
+          <div class="card-meta">Finance Dept • Sealed</div>
+        </div>
+        <div>
+          <div class="card-price">₦7,500</div>
+        </div>
+      </div>
+      <div class="listing-card-preview">
+        <span class="card-emoji">💻</span>
+        <div class="card-info">
+          <div class="card-title">HP Laptop — 8GB RAM</div>
+          <div class="card-meta">Level 300 student</div>
+        </div>
+        <div>
+          <div class="card-price">₦85,000</div>
+        </div>
+      </div>
+      <div class="listing-card-preview">
+        <span class="card-emoji">🍛</span>
+        <div class="card-info">
+          <div class="card-title">Jollof + Protein</div>
+          <div class="card-meta">Hostel B Kitchen • Today</div>
+        </div>
+        <div>
+          <div class="card-price">₦800</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEARCH -->
+  <div class="search-section">
+    <div class="search-wrap">
+      <input type="text" id="homeSearch" placeholder="Search for gadgets, food, services, hostel rooms…" onkeydown="if(event.key==='Enter') goSearch()" />
+      <button class="search-btn" onclick="goSearch()">Search</button>
+    </div>
+    <div class="filter-chips">
+      <span class="chip active" onclick="setActive(this, 'all')">All</span>
+      <span class="chip" onclick="setActive(this, 'Gadgets')">💻 Gadgets</span>
+      <span class="chip" onclick="setActive(this, 'Food')">🍛 Food</span>
+      <span class="chip" onclick="setActive(this, 'Services')">🛠 Services</span>
+      <span class="chip" onclick="setActive(this, 'Clothing')">👗 Clothing</span>
+      <span class="chip" onclick="setActive(this, 'Hostel')">🏠 Hostel</span>
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <section class="section" id="categories">
+    <div class="section-head">
+      <div class="section-label">What are you looking for?</div>
+      <h2 class="section-title">Browse by Category</h2>
+    </div>
+    <div class="categories-grid">
+      <a href="kwasu-listings.html?cat=Gadgets" class="cat-card">
+        <span class="cat-icon">💻</span>
+        <div class="cat-name">Gadgets</div>
+        <div class="cat-count">57 listings</div>
+      </a>
+      <a href="kwasu-listings.html?cat=Food" class="cat-card">
+        <span class="cat-icon">🍛</span>
+        <div class="cat-name">Food</div>
+        <div class="cat-count">41 listings</div>
+      </a>
+      <a href="kwasu-listings.html?cat=Services" class="cat-card">
+        <span class="cat-icon">🛠</span>
+        <div class="cat-name">Services</div>
+        <div class="cat-count">38 listings</div>
+      </a>
+      <a href="kwasu-listings.html?cat=Clothing" class="cat-card">
+        <span class="cat-icon">👗</span>
+        <div class="cat-name">Clothing</div>
+        <div class="cat-count">29 listings</div>
+      </a>
+      <a href="kwasu-listings.html?cat=Hostel" class="cat-card">
+        <span class="cat-icon">🏠</span>
+        <div class="cat-name">Hostel</div>
+        <div class="cat-count">18 listings</div>
+      </a>
+      <a href="kwasu-listings.html?cat=Printing" class="cat-card">
+        <span class="cat-icon">🖨</span>
+        <div class="cat-name">Printing</div>
+        <div class="cat-count">12 listings</div>
+      </a>
+      <a href="kwasu-listings.html?cat=Tutoring" class="cat-card">
+        <span class="cat-icon">✏️</span>
+        <div class="cat-name">Tutoring</div>
+        <div class="cat-count">23 listings</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- LISTINGS -->
+  <section class="section listings-section" id="listings">
+    <div class="listings-header">
+      <div>
+        <div class="section-label">Fresh on campus</div>
+        <h2 class="section-title">Latest Listings</h2>
+      </div>
+      <a href="kwasu-listings.html" class="view-all">View all →</a>
+    </div>
+    <div class="listings-grid">
+
+      <div class="item-card">
+        <div class="item-img bg-service">
+          🏠
+          <span class="item-badge">Just added</span>
+        </div>
+        <div class="item-body">
+          <div class="item-cat">Hostel</div>
+          <div class="item-name">Single Room — Hostel C (self-contain)</div>
+          <div class="item-seller">👤 Ridwan K. · Finance Dept</div>
+          <div class="item-footer">
+            <span class="item-price">₦45,000</span>
+            <span class="item-condition">Per session</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-img bg-gadgets">
+          📱
+        </div>
+        <div class="item-body">
+          <div class="item-cat">Gadgets</div>
+          <div class="item-name">Samsung Galaxy A14 — 64GB</div>
+          <div class="item-seller">👤 Tunde B. · Engineering</div>
+          <div class="item-footer">
+            <span class="item-price">₦68,000</span>
+            <span class="item-condition">Fairly used</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-img bg-food">
+          🍛
+          <span class="item-badge">Today</span>
+        </div>
+        <div class="item-body">
+          <div class="item-cat">Food</div>
+          <div class="item-name">Jollof Rice + Chicken</div>
+          <div class="item-seller">👤 Mama Bisi · Hostel B</div>
+          <div class="item-footer">
+            <span class="item-price">₦900</span>
+            <span class="item-condition">Fresh</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-img bg-service">
+          🎨
+        </div>
+        <div class="item-body">
+          <div class="item-cat">Services</div>
+          <div class="item-name">Graphic Design — Flyers & Logos</div>
+          <div class="item-seller">👤 Mariam O. · Mass Comm</div>
+          <div class="item-footer">
+            <span class="item-price">₦1,500</span>
+            <span class="item-condition">Per job</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-img bg-service">
+          👗
+        </div>
+        <div class="item-body">
+          <div class="item-cat">Clothing</div>
+          <div class="item-name">KWASU Hoodie — Size L (Green)</div>
+          <div class="item-seller">👤 Ahmed S. · Finance Dept</div>
+          <div class="item-footer">
+            <span class="item-price">₦5,500</span>
+            <span class="item-condition">Brand new</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-img bg-gadgets">
+          🖨
+        </div>
+        <div class="item-body">
+          <div class="item-cat">Services</div>
+          <div class="item-name">Binding & Printing Services</div>
+          <div class="item-seller">👤 Yusuf P. · Near Gate 1</div>
+          <div class="item-footer">
+            <span class="item-price">₦30/page</span>
+            <span class="item-condition">Same day</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="how">
+    <div class="section-head">
+      <div class="section-label">Simple process</div>
+      <h2 class="section-title">How KWASUMarket Works</h2>
+    </div>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-icon">📝</div>
+        <div class="how-title">Create a free listing</div>
+        <div class="how-desc">Post what you're selling or what service you offer in under 2 minutes. No account needed to start.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-icon">🔍</div>
+        <div class="how-title">Buyers find you</div>
+        <div class="how-desc">KWASU students searching for what you have will see your listing and reach out directly via WhatsApp.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-icon">🤝</div>
+        <div class="how-title">Meet on campus</div>
+        <div class="how-desc">Arrange a safe handover anywhere on campus — library, hostel, or the SUB. No shipping, no stress.</div>
+      </div>
+      <div class="how-card">
+        <div class="how-icon">💸</div>
+        <div class="how-title">Pay & close the deal</div>
+        <div class="how-desc">Pay cash or transfer. The deal is between you and the seller — zero commission, zero fees.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <div class="cta-banner">
+    <div class="cta-text">
+      <h2>Got something to sell?</h2>
+      <p>Post your item for free and reach hundreds of KWASU students today.</p>
+    </div>
+    <div class="cta-actions">
+      <a href="kwasu-post.html" class="btn-primary">Post an Item — Free</a>
+      <a href="#how" class="btn-ghost">Learn more</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">KWASU<span>Market</span></a>
+        <p>The student marketplace for Kwara State University, Malete. Built by students, for students.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Marketplace</h4>
+        <ul>
+          <li><a href="kwasu-listings.html">Browse All</a></li>
+          <li><a href="kwasu-listings.html?cat=Gadgets">Gadgets</a></li>
+          <li><a href="kwasu-listings.html?cat=Food">Food</a></li>
+          <li><a href="kwasu-listings.html?cat=Services">Services</a></li>
+          <li><a href="kwasu-listings.html?cat=Hostel">Hostel</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>About</h4>
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#how">Safety tips</a></li>
+          <li><a href="kwasu-post.html">Post an item</a></li>
+          <li><a href="#">Contact us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 KWASUMarket. Made with ❤️ in Malete.</span>
+      <span>For KWASU students only.</span>
+    </div>
+  </footer>
+
+  <script>
+    let selectedCat = 'all';
+
+    function toggleNav() {
+      const links = document.getElementById('navLinks');
+      const burger = document.getElementById('hamburger');
+      links.classList.toggle('open');
+      burger.classList.toggle('open');
+    }
+
+    function setActive(el, cat) {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      selectedCat = cat;
+    }
+
+    function goSearch() {
+      const q = document.getElementById('homeSearch').value.trim();
+      let url = 'kwasu-listings.html';
+      const params = [];
+      if (q) params.push('q=' + encodeURIComponent(q));
+      if (selectedCat !== 'all') params.push('cat=' + encodeURIComponent(selectedCat));
+      if (params.length) url += '?' + params.join('&');
+      window.location.href = url;
+    }
+  </script>
+
+</body>
+</html>

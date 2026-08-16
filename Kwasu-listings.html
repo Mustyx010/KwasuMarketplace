@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browse Listings — KWASUMarket</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:    #1A6B3C;
+      --green-lt: #2A8F52;
+      --gold:     #E8A020;
+      --sand:     #FDF6EC;
+      --ink:      #0F1A14;
+      --muted:    #6B7B72;
+      --white:    #FFFFFF;
+      --card-bg:  #F4FAF6;
+      --border:   #D6E8DC;
+      --red:      #D94040;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--sand); color: var(--ink); line-height: 1.6; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--green);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw; height: 60px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.18);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 800;
+      color: var(--white); letter-spacing: -.5px; text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,.82); text-decoration: none; font-size: .875rem; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+    .nav-cta {
+      background: var(--gold); color: var(--ink) !important;
+      padding: .4rem 1.1rem; border-radius: 6px;
+      font-weight: 600 !important; font-size: .85rem !important;
+    }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 22px; height: 2px; background: var(--white); border-radius: 2px; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background: var(--green);
+      padding: 3rem 5vw 2.5rem;
+    }
+    .breadcrumb {
+      font-size: .78rem; color: rgba(255,255,255,.55);
+      margin-bottom: .8rem; display: flex; align-items: center; gap: .4rem;
+    }
+    .breadcrumb a { color: rgba(255,255,255,.55); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--gold); }
+    .breadcrumb span { color: rgba(255,255,255,.3); }
+    .page-header h1 {
+      font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800; color: var(--white); letter-spacing: -.02em;
+      margin-bottom: .4rem;
+    }
+    .page-header p { color: rgba(255,255,255,.65); font-size: .95rem; }
+
+    /* ── SEARCH BAR ── */
+    .search-bar-row {
+      background: var(--green);
+      padding: 0 5vw 2rem;
+      display: flex; gap: 1rem; flex-wrap: wrap;
+    }
+    .search-wrap {
+      flex: 1; min-width: 240px;
+      display: flex;
+    }
+    .search-wrap input {
+      flex: 1;
+      border: 2px solid rgba(255,255,255,.2); border-right: none;
+      border-radius: 10px 0 0 10px;
+      padding: .75rem 1.1rem;
+      font-size: .95rem; font-family: 'Inter', sans-serif;
+      outline: none; background: rgba(255,255,255,.1);
+      color: var(--white);
+      transition: border-color .2s;
+    }
+    .search-wrap input::placeholder { color: rgba(255,255,255,.45); }
+    .search-wrap input:focus { border-color: var(--gold); }
+    .search-btn {
+      background: var(--gold); color: var(--ink);
+      border: none; cursor: pointer;
+      padding: 0 1.4rem; border-radius: 0 10px 10px 0;
+      font-size: .9rem; font-weight: 600; font-family: 'Inter', sans-serif;
+    }
+    .sort-select {
+      border: 2px solid rgba(255,255,255,.2);
+      background: rgba(255,255,255,.1); color: var(--white);
+      padding: .75rem 1rem; border-radius: 10px;
+      font-size: .875rem; font-family: 'Inter', sans-serif;
+      outline: none; cursor: pointer;
+    }
+    .sort-select option { background: var(--green); color: var(--white); }
+
+    /* ── LAYOUT ── */
+    .listings-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 2rem;
+      padding: 2rem 5vw 4rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar { display: flex; flex-direction: column; gap: 1.2rem; }
+    .filter-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 1.3rem 1.2rem;
+    }
+    .filter-title {
+      font-size: .75rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--green);
+      margin-bottom: 1rem;
+    }
+    .filter-list { display: flex; flex-direction: column; gap: .1rem; }
+    .filter-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .5rem .6rem; border-radius: 8px;
+      cursor: pointer; transition: background .15s;
+      font-size: .875rem; color: var(--ink);
+    }
+    .filter-item:hover { background: var(--card-bg); }
+    .filter-item.active { background: var(--card-bg); font-weight: 600; color: var(--green); }
+    .filter-item-left { display: flex; align-items: center; gap: .6rem; }
+    .filter-count {
+      font-size: .72rem; color: var(--muted);
+      background: var(--card-bg); padding: .1rem .45rem;
+      border-radius: 100px;
+    }
+    .filter-item.active .filter-count { background: var(--green); color: var(--white); }
+
+    /* price range */
+    .price-inputs { display: flex; gap: .5rem; align-items: center; }
+    .price-inputs input {
+      flex: 1; border: 1.5px solid var(--border);
+      border-radius: 8px; padding: .5rem .7rem;
+      font-size: .85rem; font-family: 'Inter', sans-serif;
+      color: var(--ink); outline: none;
+      transition: border-color .2s;
+    }
+    .price-inputs input:focus { border-color: var(--green); }
+    .price-inputs span { color: var(--muted); font-size: .85rem; }
+    .apply-price {
+      margin-top: .8rem;
+      width: 100%; background: var(--green); color: var(--white);
+      border: none; border-radius: 8px; padding: .55rem;
+      font-size: .85rem; font-weight: 600; cursor: pointer;
+      font-family: 'Inter', sans-serif; transition: background .2s;
+    }
+    .apply-price:hover { background: var(--green-lt); }
+
+    /* condition checkboxes */
+    .check-list { display: flex; flex-direction: column; gap: .5rem; }
+    .check-item { display: flex; align-items: center; gap: .6rem; cursor: pointer; font-size: .875rem; }
+    .check-item input[type="checkbox"] { accent-color: var(--green); width: 15px; height: 15px; cursor: pointer; }
+
+    .clear-filters {
+      width: 100%; border: 1.5px solid var(--border);
+      background: transparent; color: var(--muted);
+      border-radius: 8px; padding: .55rem;
+      font-size: .82rem; cursor: pointer;
+      font-family: 'Inter', sans-serif; transition: all .2s;
+    }
+    .clear-filters:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── MAIN CONTENT ── */
+    .main-content { min-width: 0; }
+
+    .results-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.2rem; flex-wrap: wrap; gap: .8rem;
+    }
+    .results-count { font-size: .875rem; color: var(--muted); }
+    .results-count strong { color: var(--ink); }
+    .view-toggle { display: flex; gap: .4rem; }
+    .view-btn {
+      width: 34px; height: 34px;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      background: var(--white); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: all .15s;
+    }
+    .view-btn.active { background: var(--green); border-color: var(--green); color: var(--white); }
+
+    /* active filter tags */
+    .active-filters {
+      display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem;
+    }
+    .filter-tag {
+      display: flex; align-items: center; gap: .4rem;
+      background: var(--green); color: var(--white);
+      padding: .25rem .75rem; border-radius: 100px;
+      font-size: .78rem; font-weight: 500;
+    }
+    .filter-tag button {
+      background: none; border: none; color: rgba(255,255,255,.7);
+      cursor: pointer; font-size: .9rem; line-height: 1; padding: 0;
+    }
+    .filter-tag button:hover { color: var(--white); }
+
+    /* ── LISTINGS GRID ── */
+    .listings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.1rem;
+    }
+    .listings-grid.list-view { grid-template-columns: 1fr; }
+
+    .item-card {
+      background: var(--white);
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      transition: transform .2s, box-shadow .2s;
+      cursor: pointer;
+    }
+    .item-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.09); }
+
+    /* list view card */
+    .list-view .item-card { display: flex; }
+    .list-view .item-img { width: 130px; flex-shrink: 0; height: auto; min-height: 120px; }
+    .list-view .item-body { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+
+    .item-img {
+      height: 150px; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem;
+    }
+    .item-img.bg-gadgets { background: #EDF3FF; }
+    .item-img.bg-food    { background: #FFF6E8; }
+    .item-img.bg-service { background: #F5EEFF; }
+    .item-img.bg-hostel  { background: #EEFAF5; }
+    .item-img.bg-cloth   { background: #FFF0F5; }
+    .item-img.bg-print   { background: #F0F4FF; }
+
+    .item-badge {
+      position: absolute; top: 10px; left: 10px;
+      font-size: .62rem; font-weight: 700;
+      padding: .18rem .5rem; border-radius: 5px;
+      text-transform: uppercase;
+    }
+    .badge-new  { background: var(--gold);   color: var(--ink); }
+    .badge-hot  { background: #D94040;       color: var(--white); }
+    .badge-free { background: var(--green);  color: var(--white); }
+
+    .wishlist-btn {
+      position: absolute; top: 10px; right: 10px;
+      width: 30px; height: 30px;
+      background: var(--white); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .95rem; cursor: pointer; border: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,.12);
+      transition: transform .15s;
+    }
+    .wishlist-btn:hover { transform: scale(1.15); }
+
+    .item-body { padding: .9rem 1rem 1rem; }
+    .item-cat {
+      font-size: .7rem; font-weight: 600; color: var(--green);
+      text-transform: uppercase; letter-spacing: .06em; margin-bottom: .25rem;
+    }
+    .item-name { font-weight: 600; font-size: .9rem; color: var(--ink); margin-bottom: .25rem; line-height: 1.3; }
+    .item-seller { font-size: .75rem; color: var(--muted); margin-bottom: .7rem; }
+    .item-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .4rem; }
+    .item-price { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--green); }
+    .item-condition {
+      font-size: .7rem; color: var(--muted);
+      border: 1px solid var(--border); padding: .12rem .5rem; border-radius: 4px;
+    }
+    .item-whatsapp {
+      display: flex; align-items: center; gap: .4rem;
+      margin-top: .7rem;
+      background: #25D366; color: var(--white);
+      border: none; border-radius: 7px; padding: .45rem .8rem;
+      font-size: .78rem; font-weight: 600; cursor: pointer;
+      font-family: 'Inter', sans-serif; width: 100%;
+      justify-content: center; transition: opacity .2s;
+    }
+    .item-whatsapp:hover { opacity: .88; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center; padding: 4rem 2rem;
+    }
+    .empty-state .emoji { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
+    .empty-state h3 { font-family: 'Syne', sans-serif; font-size: 1.3rem; margin-bottom: .5rem; }
+    .empty-state p { color: var(--muted); font-size: .9rem; }
+
+    /* ── PAGINATION ── */
+    .pagination {
+      display: flex; justify-content: center; align-items: center;
+      gap: .5rem; margin-top: 2.5rem; flex-wrap: wrap;
+    }
+    .page-btn {
+      width: 38px; height: 38px;
+      border: 1.5px solid var(--border); border-radius: 9px;
+      background: var(--white); cursor: pointer;
+      font-size: .875rem; font-weight: 500; color: var(--ink);
+      font-family: 'Inter', sans-serif; transition: all .15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .page-btn:hover { border-color: var(--green); color: var(--green); }
+    .page-btn.active { background: var(--green); border-color: var(--green); color: var(--white); font-weight: 700; }
+    .page-btn.arrow { font-size: 1rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      .listings-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .sidebar.open { display: flex; }
+    }
+    @media (max-width: 600px) {
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; right: 0; background: var(--green); padding: 1rem 5vw 1.5rem; gap: 1rem; z-index: 99; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+      .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+      .hamburger.open span:nth-child(2) { opacity: 0; }
+      .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+      .hamburger span { transition: transform .2s, opacity .2s; }
+      .listings-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="kwasu-marketplace.html" class="nav-logo">KWASU<span>Market</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="kwasu-marketplace.html#categories">Browse</a></li>
+      <li><a href="kwasu-listings.html" class="active">Listings</a></li>
+      <li><a href="kwasu-marketplace.html#how">How it works</a></li>
+      <li><a href="kwasu-post.html" class="nav-cta">Post an Item</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="breadcrumb">
+      <a href="kwasu-marketplace.html">Home</a>
+      <span>›</span>
+      <span>All Listings</span>
+    </div>
+    <h1>Browse Listings</h1>
+    <p>312 items available from KWASU students right now</p>
+  </div>
+
+  <!-- SEARCH + SORT BAR -->
+  <div class="search-bar-row">
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="Search gadgets, food, services…" oninput="filterListings()" />
+      <button class="search-btn">🔍</button>
+    </div>
+    <select class="sort-select" id="sortSelect" onchange="filterListings()">
+      <option value="newest">Newest first</option>
+      <option value="price-low">Price: Low to High</option>
+      <option value="price-high">Price: High to Low</option>
+      <option value="az">Name: A–Z</option>
+    </select>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="listings-layout">
+
+    <!-- SIDEBAR FILTERS -->
+    <aside class="sidebar">
+
+      <div class="filter-card">
+        <div class="filter-title">Category</div>
+        <div class="filter-list" id="categoryFilter">
+          <div class="filter-item active" onclick="setCategory(this, 'all')">
+            <div class="filter-item-left"><span>🗂</span> All</div>
+            <span class="filter-count">312</span>
+          </div>
+          <div class="filter-item" onclick="setCategory(this, 'Gadgets')">
+            <div class="filter-item-left"><span>💻</span> Gadgets</div>
+            <span class="filter-count">57</span>
+          </div>
+          <div class="filter-item" onclick="setCategory(this, 'Food')">
+            <div class="filter-item-left"><span>🍛</span> Food</div>
+            <span class="filter-count">41</span>
+          </div>
+          <div class="filter-item" onclick="setCategory(this, 'Services')">
+            <div class="filter-item-left"><span>🛠</span> Services</div>
+            <span class="filter-count">38</span>
+          </div>
+          <div class="filter-item" onclick="setCategory(this, 'Clothing')">
+            <div class="filter-item-left"><span>👗</span> Clothing</div>
+            <span class="filter-count">29</span>
+          </div>
+          <div class="filter-item" onclick="setCategory(this, 'Hostel')">
+            <div class="filter-item-left"><span>🏠</span> Hostel</div>
+            <span class="filter-count">18</span>
+          </div>
+          <div class="filter-item" onclick="setCategory(this, 'Printing')">
+            <div class="filter-item-left"><span>🖨</span> Printing</div>
+            <span class="filter-count">12</span>
+          </div>
+          <div class="filter-item" onclick="setCategory(this, 'Tutoring')">
+            <div class="filter-item-left"><span>✏️</span> Tutoring</div>
+            <span class="filter-count">23</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-card">
+        <div class="filter-title">Price Range (₦)</div>
+        <div class="price-inputs">
+          <input type="number" id="minPrice" placeholder="Min" min="0" />
+          <span>–</span>
+          <input type="number" id="maxPrice" placeholder="Max" min="0" />
+        </div>
+        <button class="apply-price" onclick="filterListings()">Apply</button>
+      </div>
+
+      <div class="filter-card">
+        <div class="filter-title">Condition</div>
+        <div class="check-list">
+          <label class="check-item"><input type="checkbox" value="Brand new" onchange="filterListings()" /> Brand new</label>
+          <label class="check-item"><input type="checkbox" value="Like new" onchange="filterListings()" /> Like new</label>
+          <label class="check-item"><input type="checkbox" value="Good" onchange="filterListings()" /> Good</label>
+          <label class="check-item"><input type="checkbox" value="Fairly used" onchange="filterListings()" /> Fairly used</label>
+          <label class="check-item"><input type="checkbox" value="Fresh" onchange="filterListings()" /> Fresh (food)</label>
+        </div>
+      </div>
+
+      <div class="filter-card">
+        <div class="filter-title">Department</div>
+        <div class="check-list">
+          <label class="check-item"><input type="checkbox" value="Finance" onchange="filterListings()" /> Finance</label>
+          <label class="check-item"><input type="checkbox" value="Engineering" onchange="filterListings()" /> Engineering</label>
+          <label class="check-item"><input type="checkbox" value="Mass Comm" onchange="filterListings()" /> Mass Comm</label>
+          <label class="check-item"><input type="checkbox" value="Law" onchange="filterListings()" /> Law</label>
+          <label class="check-item"><input type="checkbox" value="Sciences" onchange="filterListings()" /> Sciences</label>
+        </div>
+      </div>
+
+      <button class="clear-filters" onclick="clearFilters()">✕ Clear all filters</button>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+      <div class="results-bar">
+        <p class="results-count" id="resultsCount"><strong>312</strong> listings found</p>
+        <div style="display:flex; gap:.8rem; align-items:center;">
+          <div class="view-toggle">
+            <button class="view-btn active" onclick="setView('grid', this)" title="Grid view">⊞</button>
+            <button class="view-btn" onclick="setView('list', this)" title="List view">☰</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="active-filters" id="activeTags"></div>
+
+      <div class="listings-grid" id="listingsGrid">
+        <!-- Cards injected by JS -->
+      </div>
+
+      <div class="pagination" id="pagination"></div>
+
+    </main>
+  </div>
+
+  <script>
+    // ── DATA ──
+    const ALL_LISTINGS = [
+      { id:1,  emoji:'📱', cat:'Gadgets',  name:'Samsung Galaxy A14 — 64GB',       seller:'Tunde B.',    dept:'Engineering', price:68000, condition:'Fairly used', badge:'',       bg:'bg-gadgets', phone:'08012345678' },
+      { id:2,  emoji:'💻', cat:'Gadgets',  name:'HP Laptop — 8GB RAM, 256GB SSD',  seller:'Amaka O.',    dept:'Sciences',    price:85000, condition:'Good',        badge:'hot',    bg:'bg-gadgets', phone:'08023456789' },
+      { id:3,  emoji:'🎧', cat:'Gadgets',  name:'JBL Earbuds — Sealed',            seller:'Musa K.',     dept:'Finance',     price:7500,  condition:'Brand new',   badge:'new',    bg:'bg-gadgets', phone:'08034567890' },
+      { id:4,  emoji:'🖥',  cat:'Gadgets',  name:'Dell Monitor 22" — HDMI',         seller:'Seun A.',     dept:'Engineering', price:42000, condition:'Good',        badge:'',       bg:'bg-gadgets', phone:'08045678901' },
+      { id:5,  emoji:'⌨️', cat:'Gadgets',  name:'Mechanical Keyboard — USB',       seller:'Ibrahim F.',  dept:'Sciences',    price:9500,  condition:'Like new',    badge:'',       bg:'bg-gadgets', phone:'08056789012' },
+      { id:6,  emoji:'🔋', cat:'Gadgets',  name:'Power Bank — 20,000mAh Anker',    seller:'Blessing N.', dept:'Mass Comm',   price:12000, condition:'Like new',    badge:'',       bg:'bg-gadgets', phone:'08067890123' },
+      { id:7,  emoji:'🍛', cat:'Food',     name:'Jollof Rice + Chicken',           seller:'Mama Bisi',   dept:'',            price:900,   condition:'Fresh',       badge:'hot',    bg:'bg-food',    phone:'08078901234' },
+      { id:8,  emoji:'🍲', cat:'Food',     name:'Egusi Soup + Eba (takeaway)',      seller:'Aunty Shade', dept:'',            price:700,   condition:'Fresh',       badge:'',       bg:'bg-food',    phone:'08089012345' },
+      { id:9,  emoji:'🍱', cat:'Food',     name:'Fried Rice + 2 Proteins',         seller:'Mama Bisi',   dept:'',            price:1100,  condition:'Fresh',       badge:'new',    bg:'bg-food',    phone:'08090123456' },
+      { id:10, emoji:'🥘', cat:'Food',     name:'Pepper Soup (Goat Meat)',         seller:'Baba Chukwu', dept:'',            price:1200,  condition:'Fresh',       badge:'',       bg:'bg-food',    phone:'08001234567' },
+      { id:11, emoji:'☕', cat:'Food',     name:'Morning Tea + Bread & Egg',       seller:'Hajia Salma', dept:'',            price:400,   condition:'Fresh',       badge:'',       bg:'bg-food',    phone:'08012340987' },
+      { id:12, emoji:'🎨', cat:'Services', name:'Graphic Design — Flyers & Logos', seller:'Mariam O.',   dept:'Mass Comm',   price:1500,  condition:'Per job',     badge:'',       bg:'bg-service', phone:'08023451098' },
+      { id:13, emoji:'💇', cat:'Services', name:'Hair Braiding — All styles',      seller:'Fatima A.',   dept:'Sciences',    price:2000,  condition:'Per session', badge:'',       bg:'bg-service', phone:'08034562109' },
+      { id:14, emoji:'📷', cat:'Services', name:'Campus Photography — Events',     seller:'Dayo M.',     dept:'Mass Comm',   price:5000,  condition:'Per event',   badge:'',       bg:'bg-service', phone:'08045673210' },
+      { id:15, emoji:'✏️', cat:'Tutoring', name:'Maths & Stats Tutoring (100L)',   seller:'Adaeze C.',   dept:'Sciences',    price:1000,  condition:'Per hour',    badge:'',       bg:'bg-service', phone:'08056784321' },
+      { id:16, emoji:'📊', cat:'Tutoring', name:'FIN 201 — Financial Accounting',  seller:'Ridwan K.',   dept:'Finance',     price:800,   condition:'Per hour',    badge:'new',    bg:'bg-service', phone:'08067895432' },
+      { id:17, emoji:'👗', cat:'Clothing', name:'KWASU Hoodie — Size L (Green)',   seller:'Ahmed S.',    dept:'Finance',     price:5500,  condition:'Brand new',   badge:'new',    bg:'bg-cloth',   phone:'08078906543' },
+      { id:18, emoji:'👟', cat:'Clothing', name:'Nike Air Max — Size 43',          seller:'Emeka T.',    dept:'Engineering', price:18000, condition:'Fairly used', badge:'',       bg:'bg-cloth',   phone:'08089017654' },
+      { id:19, emoji:'👔', cat:'Clothing', name:'Corporate Shirt (unisex) — M/L',  seller:'Yemi O.',     dept:'Law',         price:3200,  condition:'Brand new',   badge:'',       bg:'bg-cloth',   phone:'08090128765' },
+      { id:20, emoji:'🏠', cat:'Hostel',   name:'Single Room — Hostel C (self-contain)', seller:'Ridwan K.', dept:'Finance', price:45000, condition:'Per session', badge:'hot',   bg:'bg-hostel',  phone:'08001239876' },
+      { id:21, emoji:'🛏', cat:'Hostel',   name:'Room to Share — 2 slots left',   seller:'Ngozi B.',    dept:'Sciences',    price:22000, condition:'Per session', badge:'',       bg:'bg-hostel',  phone:'08012340876' },
+      { id:22, emoji:'🖨', cat:'Printing', name:'Binding & Printing — Same day',   seller:'Yusuf P.',    dept:'',            price:30,    condition:'Per page',    badge:'',       bg:'bg-print',   phone:'08023451876' },
+      { id:23, emoji:'📄', cat:'Printing', name:'Project Printing & Spiral Bind', seller:'Yusuf P.',    dept:'',            price:500,   condition:'Per copy',    badge:'',       bg:'bg-print',   phone:'08034562876' },
+      { id:24, emoji:'🔌', cat:'Gadgets',  name:'Extension Box — 4-way socket',   seller:'Chidi U.',    dept:'Engineering', price:3500,  condition:'Good',        badge:'',       bg:'bg-gadgets', phone:'08045673876' },
+    ];
+
+    let currentCategory = 'all';
+    let currentPage = 1;
+    const PER_PAGE = 12;
+
+    function getFiltered() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const sort = document.getElementById('sortSelect').value;
+      const minP = parseFloat(document.getElementById('minPrice').value) || 0;
+      const maxP = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+      const checkedCond = [...document.querySelectorAll('.check-list input:checked')].map(i => i.value);
+      const checkedDept = [...document.querySelectorAll('.filter-card:nth-child(4) input:checked')].map(i => i.value);
+
+      let items = ALL_LISTINGS.filter(item => {
+        const matchCat  = currentCategory === 'all' || item.cat === currentCategory;
+        const matchQ    = item.name.toLowerCase().includes(q) || item.cat.toLowerCase().includes(q) || item.seller.toLowerCase().includes(q);
+        const matchP    = item.price >= minP && item.price <= maxP;
+        const matchCond = checkedCond.length === 0 || checkedCond.includes(item.condition);
+        const matchDept = checkedDept.length === 0 || checkedDept.some(d => item.dept.includes(d));
+        return matchCat && matchQ && matchP && matchCond && matchDept;
+      });
+
+      if (sort === 'price-low')  items.sort((a,b) => a.price - b.price);
+      if (sort === 'price-high') items.sort((a,b) => b.price - a.price);
+      if (sort === 'az')         items.sort((a,b) => a.name.localeCompare(b.name));
+
+      return items;
+    }
+
+    function filterListings() {
+      currentPage = 1;
+      render();
+    }
+
+    function setCategory(el, cat) {
+      document.querySelectorAll('.filter-item').forEach(i => i.classList.remove('active'));
+      el.classList.add('active');
+      currentCategory = cat;
+      filterListings();
+    }
+
+    function setView(type, btn) {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const grid = document.getElementById('listingsGrid');
+      grid.classList.toggle('list-view', type === 'list');
+    }
+
+    function clearFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('minPrice').value = '';
+      document.getElementById('maxPrice').value = '';
+      document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+      setCategory(document.querySelector('.filter-item'), 'all');
+    }
+
+    function formatPrice(p) {
+      return '₦' + p.toLocaleString();
+    }
+
+    function render() {
+      const items = getFiltered();
+      const total = items.length;
+      const start = (currentPage - 1) * PER_PAGE;
+      const page  = items.slice(start, start + PER_PAGE);
+      const grid  = document.getElementById('listingsGrid');
+
+      document.getElementById('resultsCount').innerHTML = `<strong>${total}</strong> listing${total !== 1 ? 's' : ''} found`;
+
+      // active tags
+      const tags = document.getElementById('activeTags');
+      tags.innerHTML = '';
+      if (currentCategory !== 'all') {
+        tags.innerHTML += `<div class="filter-tag">${currentCategory} <button onclick="clearCat()">×</button></div>`;
+      }
+
+      if (page.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <span class="emoji">🔍</span>
+            <h3>No listings found</h3>
+            <p>Try changing your filters or search term.</p>
+          </div>`;
+        document.getElementById('pagination').innerHTML = '';
+        return;
+      }
+
+      grid.innerHTML = page.map(item => `
+        <div class="item-card" onclick="window.location.href='kwasu-item.html'">
+          <div class="item-img ${item.bg}">
+            ${item.emoji}
+            ${item.badge ? `<span class="item-badge badge-${item.badge}">${item.badge}</span>` : ''}
+            <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWish(this)" title="Save">🤍</button>
+          </div>
+          <div class="item-body">
+            <div class="item-cat">${item.cat}</div>
+            <div class="item-name">${item.name}</div>
+            <div class="item-seller">👤 ${item.seller}${item.dept ? ' · ' + item.dept : ''}</div>
+            <div class="item-footer">
+              <span class="item-price">${formatPrice(item.price)}</span>
+              <span class="item-condition">${item.condition}</span>
+            </div>
+            <button class="item-whatsapp">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Chat on WhatsApp
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      renderPagination(total);
+    }
+
+    function renderPagination(total) {
+      const pages = Math.ceil(total / PER_PAGE);
+      const el = document.getElementById('pagination');
+      if (pages <= 1) { el.innerHTML = ''; return; }
+
+      let html = `<button class="page-btn arrow" onclick="goPage(${currentPage - 1})" ${currentPage===1?'disabled':''}>‹</button>`;
+      for (let i = 1; i <= pages; i++) {
+        html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+      }
+      html += `<button class="page-btn arrow" onclick="goPage(${currentPage + 1})" ${currentPage===pages?'disabled':''}>›</button>`;
+      el.innerHTML = html;
+    }
+
+    function goPage(p) {
+      const items = getFiltered();
+      const pages = Math.ceil(items.length / PER_PAGE);
+      if (p < 1 || p > pages) return;
+      currentPage = p;
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function clearCat() {
+      currentCategory = 'all';
+      document.querySelectorAll('.filter-item').forEach(i => i.classList.remove('active'));
+      document.querySelector('.filter-item').classList.add('active');
+      filterListings();
+    }
+
+    function toggleWish(btn) {
+      btn.textContent = btn.textContent === '🤍' ? '❤️' : '🤍';
+    }
+
+    function openWhatsApp(phone, name) {
+      const msg = encodeURIComponent(`Hi, I saw your listing on KWASUMarket: "${name}". Is it still available?`);
+      window.open(`https://wa.me/234${phone.slice(1)}?text=${msg}`, '_blank');
+    }
+
+    function toggleNav() {
+      document.getElementById('navLinks').classList.toggle('open');
+      document.getElementById('hamburger').classList.toggle('open');
+    }
+
+    // Init — read URL params from homepage
+    (function initFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      const cat = params.get('cat');
+      const q   = params.get('q');
+
+      if (q) {
+        document.getElementById('searchInput').value = q;
+      }
+
+      if (cat) {
+        currentCategory = cat;
+        // highlight the matching sidebar filter item
+        document.querySelectorAll('.filter-item').forEach(item => {
+          item.classList.remove('active');
+          if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(`'${cat}'`)) {
+            item.classList.add('active');
+          }
+        });
+        // update breadcrumb
+        document.querySelector('.breadcrumb').innerHTML = `
+          <a href="kwasu-marketplace.html">Home</a>
+          <span>›</span>
+          <a href="kwasu-listings.html">All Listings</a>
+          <span>›</span>
+          <span>${cat}</span>`;
+      }
+
+      render();
+    })();
+  </script>
+
+</body>
+</html>

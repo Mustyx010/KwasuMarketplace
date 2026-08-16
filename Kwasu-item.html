@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Item Detail — KWASUMarket</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:    #1A6B3C;
+      --green-lt: #2A8F52;
+      --gold:     #E8A020;
+      --sand:     #FDF6EC;
+      --ink:      #0F1A14;
+      --muted:    #6B7B72;
+      --white:    #FFFFFF;
+      --card-bg:  #F4FAF6;
+      --border:   #D6E8DC;
+      --wa:       #25D366;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--sand); color: var(--ink); line-height: 1.6; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--green);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw; height: 60px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.18);
+    }
+    .nav-logo { font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 800; color: var(--white); letter-spacing: -.5px; text-decoration: none; }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,.82); text-decoration: none; font-size: .875rem; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta { background: var(--gold); color: var(--ink) !important; padding: .4rem 1.1rem; border-radius: 6px; font-weight: 600 !important; font-size: .85rem !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 22px; height: 2px; background: var(--white); border-radius: 2px; transition: transform .2s, opacity .2s; }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+    /* BREADCRUMB */
+    .breadcrumb-bar {
+      background: var(--white);
+      border-bottom: 1.5px solid var(--border);
+      padding: .85rem 5vw;
+      display: flex; align-items: center; gap: .4rem; flex-wrap: wrap;
+      font-size: .78rem; color: var(--muted);
+    }
+    .breadcrumb-bar a { color: var(--muted); text-decoration: none; }
+    .breadcrumb-bar a:hover { color: var(--green); }
+    .breadcrumb-bar .sep { color: var(--border); }
+    .breadcrumb-bar .current { color: var(--ink); font-weight: 500; }
+
+    /* LAYOUT */
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 2rem;
+      padding: 2.5rem 5vw 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* LEFT */
+    .left-col { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
+
+    /* gallery */
+    .gallery { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .gallery-main {
+      height: 340px; display: flex; align-items: center; justify-content: center;
+      font-size: 8rem; background: #EDF3FF; position: relative;
+      transition: background .2s;
+    }
+    .gallery-badge {
+      position: absolute; top: 16px; left: 16px;
+      font-size: .7rem; font-weight: 700; padding: .25rem .65rem;
+      border-radius: 6px; text-transform: uppercase;
+    }
+    .badge-hot { background: #D94040; color: var(--white); }
+    .badge-new { background: var(--gold); color: var(--ink); }
+    .gallery-wish {
+      position: absolute; top: 14px; right: 14px;
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--white); border: none; cursor: pointer;
+      font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,.12); transition: transform .15s;
+    }
+    .gallery-wish:hover { transform: scale(1.12); }
+    .gallery-thumbs { display: flex; gap: .6rem; padding: .9rem 1rem; border-top: 1.5px solid var(--border); }
+    .thumb {
+      width: 58px; height: 58px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; cursor: pointer;
+      border: 2px solid transparent; transition: border-color .15s;
+    }
+    .thumb.active { border-color: var(--green); }
+
+    /* info card */
+    .info-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 1.8rem; }
+    .item-cat-tag {
+      display: inline-flex; align-items: center; gap: .35rem;
+      background: var(--card-bg); border: 1px solid var(--border);
+      color: var(--green); font-size: .72rem; font-weight: 600;
+      letter-spacing: .06em; text-transform: uppercase;
+      padding: .25rem .7rem; border-radius: 100px; margin-bottom: 1rem;
+    }
+    .item-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
+      font-weight: 800; color: var(--ink); line-height: 1.25; margin-bottom: 1rem;
+    }
+    .item-meta-row { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 1.4rem; }
+    .item-price { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--green); }
+    .item-cond { border: 1.5px solid var(--border); color: var(--muted); font-size: .8rem; padding: .3rem .8rem; border-radius: 6px; }
+    .item-posted { font-size: .78rem; color: var(--muted); display: flex; align-items: center; gap: .3rem; }
+    .divider { border: none; border-top: 1.5px solid var(--border); margin: 1.4rem 0; }
+    .desc-title { font-weight: 700; font-size: .9rem; margin-bottom: .6rem; }
+    .desc-body { font-size: .9rem; color: #3A4A40; line-height: 1.75; }
+    .item-tags { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1.2rem; }
+    .tag { background: var(--card-bg); border: 1px solid var(--border); font-size: .75rem; color: var(--muted); padding: .2rem .7rem; border-radius: 100px; }
+
+    /* RIGHT */
+    .right-col { display: flex; flex-direction: column; gap: 1.2rem; }
+
+    .seller-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 1.5rem; }
+    .seller-card-title { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--green); margin-bottom: 1.1rem; }
+    .seller-info { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.3rem; }
+    .seller-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--green); color: var(--white);
+      font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .seller-name { font-weight: 700; font-size: 1rem; color: var(--ink); margin-bottom: .15rem; }
+    .seller-dept { font-size: .78rem; color: var(--muted); }
+    .seller-badges { display: flex; gap: .4rem; margin-top: .4rem; flex-wrap: wrap; }
+    .seller-badge { font-size: .68rem; font-weight: 600; padding: .15rem .55rem; border-radius: 4px; }
+    .badge-dept { background: var(--card-bg); color: var(--green); border: 1px solid var(--border); }
+    .badge-verified { background: #E8F5ED; color: var(--green); }
+
+    .cta-wa {
+      display: flex; align-items: center; justify-content: center; gap: .6rem;
+      width: 100%; background: var(--wa); color: var(--white);
+      border: none; border-radius: 10px; padding: .95rem 1rem;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      font-family: 'Inter', sans-serif; text-decoration: none;
+      transition: opacity .2s, transform .15s; margin-bottom: .7rem;
+    }
+    .cta-wa:hover { opacity: .9; transform: translateY(-1px); }
+
+    .cta-share {
+      display: flex; align-items: center; justify-content: center; gap: .5rem;
+      width: 100%; background: var(--card-bg); color: var(--ink);
+      border: 1.5px solid var(--border); border-radius: 10px; padding: .75rem 1rem;
+      font-size: .9rem; font-weight: 600; cursor: pointer;
+      font-family: 'Inter', sans-serif; transition: background .2s;
+    }
+    .cta-share:hover { background: var(--border); }
+
+    .safety-note {
+      display: flex; gap: .5rem; align-items: flex-start;
+      background: var(--card-bg); border-radius: 8px; padding: .8rem;
+      font-size: .75rem; color: var(--muted); line-height: 1.5; margin-top: .8rem;
+    }
+    .safety-note span { flex-shrink: 0; }
+
+    .detail-list { display: flex; flex-direction: column; }
+    .detail-row { display: flex; justify-content: space-between; align-items: center; padding: .6rem 0; border-bottom: 1px solid var(--border); font-size: .84rem; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-row .d-label { color: var(--muted); }
+    .detail-row .d-val { font-weight: 600; color: var(--ink); }
+
+    /* RELATED */
+    .related-section { padding: 0 5vw 4rem; max-width: 1100px; margin: 0 auto; }
+    .related-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+    .related-title { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--ink); }
+    .related-link { color: var(--green); font-size: .875rem; font-weight: 600; text-decoration: none; border-bottom: 1.5px solid var(--green); }
+    .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+    .rel-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; cursor: pointer; transition: transform .2s, box-shadow .2s; text-decoration: none; display: block; }
+    .rel-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.09); }
+    .rel-img { height: 120px; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+    .rel-body { padding: .8rem .9rem .9rem; }
+    .rel-cat { font-size: .68rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .2rem; }
+    .rel-name { font-weight: 600; font-size: .85rem; color: var(--ink); margin-bottom: .5rem; line-height: 1.3; }
+    .rel-price { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--green); }
+
+    /* MOBILE CTA */
+    .mobile-cta {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--white); border-top: 1.5px solid var(--border);
+      padding: 1rem 5vw; z-index: 90; align-items: center; gap: .8rem;
+    }
+    .mobile-price { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--green); }
+    .mobile-wa {
+      flex: 1; background: var(--wa); color: var(--white);
+      border: none; border-radius: 10px; padding: .8rem;
+      font-size: .95rem; font-weight: 700; cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      display: flex; align-items: center; justify-content: center; gap: .5rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 860px) {
+      .detail-layout { grid-template-columns: 1fr; }
+      .right-col { order: -1; }
+      .cta-wa, .cta-share, .safety-note { display: none; }
+      .mobile-cta { display: flex; }
+      body { padding-bottom: 80px; }
+    }
+    @media (max-width: 600px) {
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; right: 0; background: var(--green); padding: 1rem 5vw 1.5rem; gap: 1rem; z-index: 99; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+      .gallery-main { height: 240px; font-size: 5rem; }
+      .detail-layout { padding: 1.5rem 4vw 2rem; }
+      .related-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="kwasu-marketplace.html" class="nav-logo">KWASU<span>Market</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="kwasu-marketplace.html#categories">Browse</a></li>
+      <li><a href="kwasu-listings.html">Listings</a></li>
+      <li><a href="kwasu-marketplace.html#how">How it works</a></li>
+      <li><a href="kwasu-post.html" class="nav-cta">Post an Item</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb-bar">
+    <a href="kwasu-marketplace.html">Home</a>
+    <span class="sep">›</span>
+    <a href="kwasu-listings.html">Listings</a>
+    <span class="sep">›</span>
+    <a href="kwasu-listings.html?cat=Gadgets">Gadgets</a>
+    <span class="sep">›</span>
+    <span class="current">HP Laptop — 8GB RAM, 256GB SSD</span>
+  </div>
+
+  <!-- DETAIL -->
+  <div class="detail-layout">
+
+    <!-- LEFT -->
+    <div class="left-col">
+
+      <div class="gallery">
+        <div class="gallery-main" id="galleryMain">
+          <span id="galleryEmoji">💻</span>
+          <span class="gallery-badge badge-hot">Hot</span>
+          <button class="gallery-wish" id="wishBtn" onclick="toggleWish()">🤍</button>
+        </div>
+        <div class="gallery-thumbs">
+          <div class="thumb active" onclick="setThumb(this,'💻','#EDF3FF')">💻</div>
+          <div class="thumb" onclick="setThumb(this,'🔌','#F0F4FF')" style="background:#F0F4FF">🔌</div>
+          <div class="thumb" onclick="setThumb(this,'📦','#EEF7F2')" style="background:#EEF7F2">📦</div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="item-cat-tag">💻 Gadgets</div>
+        <h1 class="item-title">HP Laptop — 8GB RAM, 256GB SSD</h1>
+        <div class="item-meta-row">
+          <span class="item-price">₦85,000</span>
+          <span class="item-cond">Good condition</span>
+          <span class="item-posted">🕐 Posted 2 hours ago</span>
+        </div>
+        <hr class="divider" />
+        <div class="desc-title">About this item</div>
+        <div class="desc-body">
+          HP 15 Laptop in good working condition. Used for one academic session only. Comes with original charger and carry bag.<br><br>
+          Specs: Intel Core i5 (10th Gen), 8GB DDR4 RAM, 256GB SSD, 15.6" HD display, Windows 11 Home. Battery holds charge for about 4–5 hours. No dead pixels, keyboard fully functional. Minor scratch on the lid — visible in photo 3.<br><br>
+          Reason for selling: upgrading to a MacBook. Serious buyers only — please don't waste my time with low offers.
+        </div>
+        <div class="item-tags">
+          <span class="tag">Intel Core i5</span>
+          <span class="tag">8GB RAM</span>
+          <span class="tag">256GB SSD</span>
+          <span class="tag">Windows 11</span>
+          <span class="tag">With charger</span>
+          <span class="tag">With bag</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-col">
+
+      <div class="seller-card">
+        <div class="seller-card-title">Seller</div>
+        <div class="seller-info">
+          <div class="seller-avatar">A</div>
+          <div>
+            <div class="seller-name">Amaka O.</div>
+            <div class="seller-dept">Sciences Department</div>
+            <div class="seller-badges">
+              <span class="seller-badge badge-dept">Sciences</span>
+              <span class="seller-badge badge-verified">✓ KWASU student</span>
+            </div>
+          </div>
+        </div>
+        <a class="cta-wa" href="#" onclick="openWhatsApp(event)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Chat on WhatsApp
+        </a>
+        <button class="cta-share" onclick="shareItem()">🔗 Share this listing</button>
+        <div class="safety-note">
+          <span>🛡</span>
+          <span>Meet in a public place on campus. Pay only after inspecting the item.</span>
+        </div>
+      </div>
+
+      <div class="seller-card">
+        <div class="seller-card-title">Item details</div>
+        <div class="detail-list">
+          <div class="detail-row"><span class="d-label">Category</span><span class="d-val">Gadgets</span></div>
+          <div class="detail-row"><span class="d-label">Condition</span><span class="d-val">Good</span></div>
+          <div class="detail-row"><span class="d-label">Price</span><span class="d-val">₦85,000</span></div>
+          <div class="detail-row"><span class="d-label">Department</span><span class="d-val">Sciences</span></div>
+          <div class="detail-row"><span class="d-label">Location</span><span class="d-val">KWASU, Malete</span></div>
+          <div class="detail-row"><span class="d-label">Listed</span><span class="d-val">Today, 2:14 PM</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RELATED -->
+  <div class="related-section">
+    <div class="related-header">
+      <div class="related-title">More in Gadgets</div>
+      <a href="kwasu-listings.html?cat=Gadgets" class="related-link">See all →</a>
+    </div>
+    <div class="related-grid">
+      <a href="kwasu-item.html" class="rel-card">
+        <div class="rel-img" style="background:#EDF3FF">📱</div>
+        <div class="rel-body"><div class="rel-cat">Gadgets</div><div class="rel-name">Samsung Galaxy A14 — 64GB</div><div class="rel-price">₦68,000</div></div>
+      </a>
+      <a href="kwasu-item.html" class="rel-card">
+        <div class="rel-img" style="background:#F0F4FF">🎧</div>
+        <div class="rel-body"><div class="rel-cat">Gadgets</div><div class="rel-name">JBL Earbuds — Sealed</div><div class="rel-price">₦7,500</div></div>
+      </a>
+      <a href="kwasu-item.html" class="rel-card">
+        <div class="rel-img" style="background:#EEF7F2">🖥</div>
+        <div class="rel-body"><div class="rel-cat">Gadgets</div><div class="rel-name">Dell Monitor 22" — HDMI</div><div class="rel-price">₦42,000</div></div>
+      </a>
+      <a href="kwasu-item.html" class="rel-card">
+        <div class="rel-img" style="background:#EDF3FF">🔋</div>
+        <div class="rel-body"><div class="rel-cat">Gadgets</div><div class="rel-name">Anker Power Bank — 20,000mAh</div><div class="rel-price">₦12,000</div></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- MOBILE CTA -->
+  <div class="mobile-cta">
+    <div class="mobile-price">₦85,000</div>
+    <button class="mobile-wa" onclick="openWhatsApp(event)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Chat on WhatsApp
+    </button>
+  </div>
+
+  <script>
+    const ITEM = { name: 'HP Laptop — 8GB RAM, 256GB SSD', phone: '08023456789', price: '₦85,000' };
+
+    function toggleNav() {
+      document.getElementById('navLinks').classList.toggle('open');
+      document.getElementById('hamburger').classList.toggle('open');
+    }
+
+    function toggleWish() {
+      const btn = document.getElementById('wishBtn');
+      const saved = btn.textContent === '❤️';
+      btn.textContent = saved ? '🤍' : '❤️';
+      showToast(saved ? 'Removed from saved' : '❤️ Saved to wishlist');
+    }
+
+    function setThumb(el, emoji, bg) {
+      document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('galleryEmoji').textContent = emoji;
+      document.getElementById('galleryMain').style.background = bg;
+    }
+
+    function openWhatsApp(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const msg = encodeURIComponent('Hi, I saw your listing on KWASUMarket: "' + ITEM.name + '" (' + ITEM.price + '). Is it still available?');
+      window.open('https://wa.me/234' + ITEM.phone.slice(1) + '?text=' + msg, '_blank');
+    }
+
+    function shareItem() {
+      if (navigator.share) {
+        navigator.share({ title: ITEM.name, text: 'Check out this listing on KWASUMarket: ' + ITEM.name + ' — ' + ITEM.price, url: window.location.href }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(window.location.href).then(() => showToast('🔗 Link copied to clipboard'));
+      }
+    }
+
+    function showToast(msg) {
+      const existing = document.getElementById('toast');
+      if (existing) existing.remove();
+      const t = document.createElement('div');
+      t.id = 'toast';
+      t.textContent = msg;
+      Object.assign(t.style, {
+        position: 'fixed', bottom: '90px', left: '50%', transform: 'translateX(-50%)',
+        background: '#0F1A14', color: '#fff', padding: '.6rem 1.2rem',
+        borderRadius: '8px', fontSize: '.85rem', fontWeight: '600',
+        zIndex: '999', whiteSpace: 'nowrap', opacity: '0', transition: 'opacity .2s'
+      });
+      document.body.appendChild(t);
+      requestAnimationFrame(() => { t.style.opacity = '1'; });
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2200);
+    }
+  </script>
+
+</body>
+</html>
