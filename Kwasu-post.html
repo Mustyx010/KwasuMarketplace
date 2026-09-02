@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Post an Item — KWASUMarket</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -130,9 +132,9 @@
     }
     .cat-btn:hover { border-color: var(--green); background: var(--white); }
     .cat-btn.selected { border-color: var(--green); background: var(--green); }
-    .cat-btn.selected .cat-btn-icon { filter: none; }
+    .cat-btn.selected .cat-btn-icon { color: var(--white); }
     .cat-btn.selected .cat-btn-label { color: var(--white); }
-    .cat-btn-icon { font-size: 1.6rem; }
+    .cat-btn-icon { font-size: 1.6rem; color: var(--green); }
     .cat-btn-label { font-size: .75rem; font-weight: 600; color: var(--ink); }
 
     /* ── FORM FIELDS ── */
@@ -194,7 +196,7 @@
     /* phone input */
     .phone-wrap { display: flex; }
     .phone-prefix {
-      display: flex; align-items: center;
+      display: flex; align-items: center; gap: .35rem;
       background: var(--card-bg); border: 1.5px solid var(--border);
       border-right: none; border-radius: 10px 0 0 10px;
       padding: 0 .9rem; font-size: .9rem; color: var(--muted);
@@ -215,7 +217,7 @@
     }
     .upload-zone:hover, .upload-zone.drag { border-color: var(--green); background: #EEF7F2; }
     .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-    .upload-icon { font-size: 2.2rem; margin-bottom: .6rem; display: block; }
+    .upload-icon { font-size: 2.2rem; margin-bottom: .6rem; display: block; color: var(--green); }
     .upload-zone p { font-size: .875rem; color: var(--muted); line-height: 1.5; }
     .upload-zone strong { color: var(--green); }
 
@@ -273,12 +275,13 @@
     .preview-img {
       height: 130px; background: var(--card-bg);
       display: flex; align-items: center; justify-content: center;
-      font-size: 3.5rem;
+      font-size: 3.5rem; color: var(--green);
     }
     .preview-body { padding: .85rem 1rem 1rem; }
     .preview-cat { font-size: .7rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .25rem; }
     .preview-name { font-weight: 600; font-size: .9rem; color: var(--ink); margin-bottom: .25rem; line-height: 1.35; }
-    .preview-seller { font-size: .75rem; color: var(--muted); margin-bottom: .7rem; }
+    .preview-seller { font-size: .75rem; color: var(--muted); margin-bottom: .7rem; display: flex; align-items: center; gap: .3rem; }
+    .preview-seller i { font-size: .9rem; }
     .preview-footer { display: flex; align-items: center; justify-content: space-between; }
     .preview-price { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--green); }
     .preview-cond { font-size: .7rem; color: var(--muted); border: 1px solid var(--border); padding: .1rem .45rem; border-radius: 4px; }
@@ -286,12 +289,12 @@
     /* tips */
     .tip-list { display: flex; flex-direction: column; gap: .8rem; }
     .tip-item { display: flex; gap: .7rem; align-items: flex-start; font-size: .82rem; color: var(--ink); line-height: 1.5; }
-    .tip-icon { font-size: 1rem; flex-shrink: 0; margin-top: .05rem; }
+    .tip-icon { font-size: 1rem; flex-shrink: 0; margin-top: .05rem; color: var(--green); }
 
     /* safety */
     .safety-list { display: flex; flex-direction: column; gap: .6rem; }
-    .safety-item { display: flex; gap: .6rem; font-size: .8rem; color: var(--muted); line-height: 1.5; }
-    .safety-item::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+    .safety-item { display: flex; gap: .6rem; align-items: flex-start; font-size: .8rem; color: var(--muted); line-height: 1.5; }
+    .safety-item i { color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: .15rem; font-size: .9rem; }
 
     /* ── SUCCESS SCREEN ── */
     .success-screen {
@@ -299,7 +302,7 @@
       text-align: center; padding: 3rem 2rem;
     }
     .success-screen.show { display: block; }
-    .success-icon { font-size: 4rem; margin-bottom: 1rem; display: block; animation: pop .4s ease; }
+    .success-icon { font-size: 4rem; margin-bottom: 1rem; display: block; color: var(--gold); animation: pop .4s ease; }
     @keyframes pop { 0% { transform: scale(.5); opacity: 0; } 80% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
     .success-screen h2 { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: .6rem; }
     .success-screen p { color: var(--muted); max-width: 340px; margin: 0 auto 1.8rem; line-height: 1.65; }
@@ -359,7 +362,7 @@
 
       <!-- SUCCESS -->
       <div class="success-screen" id="successScreen">
-        <span class="success-icon">🎉</span>
+        <i class="ph-fill ph-confetti success-icon"></i>
         <h2>Your listing is live!</h2>
         <p>Students can now find your item on KWASUMarket. They'll reach you directly on WhatsApp.</p>
         <div class="success-actions">
@@ -376,35 +379,35 @@
           <div class="form-section-title"><span>1</span> What are you listing?</div>
           <div class="cat-picker" id="catPicker">
             <div class="cat-btn" onclick="selectCat(this, 'Gadgets')">
-              <span class="cat-btn-icon">💻</span>
+              <i class="ph ph-laptop cat-btn-icon"></i>
               <span class="cat-btn-label">Gadgets</span>
             </div>
             <div class="cat-btn" onclick="selectCat(this, 'Food')">
-              <span class="cat-btn-icon">🍛</span>
+              <i class="ph ph-bowl-food cat-btn-icon"></i>
               <span class="cat-btn-label">Food</span>
             </div>
             <div class="cat-btn" onclick="selectCat(this, 'Services')">
-              <span class="cat-btn-icon">🛠</span>
+              <i class="ph ph-wrench cat-btn-icon"></i>
               <span class="cat-btn-label">Services</span>
             </div>
             <div class="cat-btn" onclick="selectCat(this, 'Clothing')">
-              <span class="cat-btn-icon">👗</span>
+              <i class="ph ph-t-shirt cat-btn-icon"></i>
               <span class="cat-btn-label">Clothing</span>
             </div>
             <div class="cat-btn" onclick="selectCat(this, 'Hostel')">
-              <span class="cat-btn-icon">🏠</span>
+              <i class="ph ph-house cat-btn-icon"></i>
               <span class="cat-btn-label">Hostel</span>
             </div>
             <div class="cat-btn" onclick="selectCat(this, 'Printing')">
-              <span class="cat-btn-icon">🖨</span>
+              <i class="ph ph-printer cat-btn-icon"></i>
               <span class="cat-btn-label">Printing</span>
             </div>
             <div class="cat-btn" onclick="selectCat(this, 'Tutoring')">
-              <span class="cat-btn-icon">✏️</span>
+              <i class="ph ph-pencil-simple cat-btn-icon"></i>
               <span class="cat-btn-label">Tutoring</span>
             </div>
             <div class="cat-btn" onclick="selectCat(this, 'Other')">
-              <span class="cat-btn-icon">📦</span>
+              <i class="ph ph-package cat-btn-icon"></i>
               <span class="cat-btn-label">Other</span>
             </div>
           </div>
@@ -462,7 +465,7 @@
           <div class="form-section-title"><span>3</span> Add a photo <span style="font-weight:400; color:var(--muted); font-size:.85rem;">(optional but recommended)</span></div>
           <div class="upload-zone" id="uploadZone">
             <input type="file" id="photoInput" accept="image/*" multiple onchange="handleImages(this)" />
-            <span class="upload-icon">📷</span>
+            <i class="ph ph-camera upload-icon"></i>
             <p><strong>Tap to upload</strong> or drag and drop<br>JPG, PNG — up to 3 photos</p>
           </div>
           <div class="image-previews" id="imagePreviews"></div>
@@ -497,7 +500,7 @@
           <div class="field">
             <label for="sellerPhone">WhatsApp number <span class="req">*</span></label>
             <div class="phone-wrap">
-              <div class="phone-prefix">🇳🇬 +234</div>
+              <div class="phone-prefix">NG +234</div>
               <input type="tel" id="sellerPhone" placeholder="080 XXXX XXXX" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')" />
             </div>
             <div class="field-error" id="phoneError">Please enter a valid 11-digit Nigerian number.</div>
@@ -520,11 +523,11 @@
       <div class="sidebar-card">
         <div class="sidebar-card-title">Live preview</div>
         <div class="preview-card">
-          <div class="preview-img" id="previewImg">📦</div>
+          <div class="preview-img" id="previewImg"><i class="ph ph-package"></i></div>
           <div class="preview-body">
             <div class="preview-cat" id="previewCat">Category</div>
             <div class="preview-name" id="previewName">Your item title will appear here</div>
-            <div class="preview-seller" id="previewSeller">👤 Your name · Department</div>
+            <div class="preview-seller" id="previewSeller"><i class="ph ph-user-circle"></i> <span id="previewSellerText">Your name · Department</span></div>
             <div class="preview-footer">
               <span class="preview-price" id="previewPrice">₦ —</span>
               <span class="preview-cond" id="previewCond">Condition</span>
@@ -537,10 +540,10 @@
       <div class="sidebar-card tips-card">
         <div class="sidebar-card-title">Tips for a great listing</div>
         <div class="tip-list">
-          <div class="tip-item"><span class="tip-icon">📸</span> Add a clear photo — listings with photos get 3× more views.</div>
-          <div class="tip-item"><span class="tip-icon">💬</span> Be specific in your title — include brand, model, or size.</div>
-          <div class="tip-item"><span class="tip-icon">💰</span> Price fairly — check what similar items sell for on campus.</div>
-          <div class="tip-item"><span class="tip-icon">⚡</span> Respond fast — buyers move on quickly.</div>
+          <div class="tip-item"><i class="ph ph-camera tip-icon"></i> Add a clear photo — listings with photos get 3× more views.</div>
+          <div class="tip-item"><i class="ph ph-chat-circle tip-icon"></i> Be specific in your title — include brand, model, or size.</div>
+          <div class="tip-item"><i class="ph ph-currency-circle-dollar tip-icon"></i> Price fairly — check what similar items sell for on campus.</div>
+          <div class="tip-item"><i class="ph ph-lightning tip-icon"></i> Respond fast — buyers move on quickly.</div>
         </div>
       </div>
 
@@ -548,10 +551,10 @@
       <div class="sidebar-card safety-card">
         <div class="sidebar-card-title">Stay safe on campus</div>
         <div class="safety-list">
-          <div class="safety-item">Meet buyers in public places — library, SUB, or lecture areas.</div>
-          <div class="safety-item">Don't share personal details beyond your WhatsApp number.</div>
-          <div class="safety-item">Collect payment before handing over the item.</div>
-          <div class="safety-item">Trust your gut — cancel if something feels off.</div>
+          <div class="safety-item"><i class="ph ph-check"></i> Meet buyers in public places — library, SUB, or lecture areas.</div>
+          <div class="safety-item"><i class="ph ph-check"></i> Don't share personal details beyond your WhatsApp number.</div>
+          <div class="safety-item"><i class="ph ph-check"></i> Collect payment before handing over the item.</div>
+          <div class="safety-item"><i class="ph ph-check"></i> Trust your gut — cancel if something feels off.</div>
         </div>
       </div>
 
@@ -560,7 +563,7 @@
 
   <script>
     let selectedCategory = '';
-    const CAT_EMOJIS = { Gadgets:'💻', Food:'🍛', Services:'🛠', Clothing:'👗', Hostel:'🏠', Printing:'🖨', Tutoring:'✏️', Other:'📦' };
+    const CAT_ICONS = { Gadgets:'laptop', Food:'bowl-food', Services:'wrench', Clothing:'t-shirt', Hostel:'house', Printing:'printer', Tutoring:'pencil-simple', Other:'package' };
 
     function toggleNav() {
       document.getElementById('navLinks').classList.toggle('open');
@@ -589,12 +592,12 @@
       const name  = document.getElementById('sellerName').value.trim() || 'Your name';
       const dept  = document.getElementById('sellerDept').value;
       const cat   = selectedCategory || 'Category';
-      const emoji = CAT_EMOJIS[selectedCategory] || '📦';
+      const iconName = CAT_ICONS[selectedCategory] || 'package';
 
-      document.getElementById('previewImg').textContent  = emoji;
+      document.getElementById('previewImg').innerHTML = `<i class="ph ph-${iconName}"></i>`;
       document.getElementById('previewCat').textContent  = cat;
       document.getElementById('previewName').textContent = title;
-      document.getElementById('previewSeller').textContent = `👤 ${name}${dept ? ' · ' + dept : ''}`;
+      document.getElementById('previewSellerText').textContent = `${name}${dept ? ' · ' + dept : ''}`;
       document.getElementById('previewPrice').textContent  = price ? '₦' + Number(price).toLocaleString() : '₦ —';
       document.getElementById('previewCond').textContent   = cond;
     }
@@ -608,7 +611,7 @@
         reader.onload = e => {
           const thumb = document.createElement('div');
           thumb.className = 'preview-thumb';
-          thumb.innerHTML = `<img src="${e.target.result}" alt="preview" /><button class="remove-img" onclick="this.parentElement.remove()">×</button>`;
+          thumb.innerHTML = `<img src="${e.target.result}" alt="preview" /><button class="remove-img" onclick="this.parentElement.remove()"><i class="ph ph-x"></i></button>`;
           container.appendChild(thumb);
         };
         reader.readAsDataURL(file);
@@ -698,6 +701,7 @@
       selectedCategory = '';
       updatePreview();
     }
+    
   </script>
 
 </body>

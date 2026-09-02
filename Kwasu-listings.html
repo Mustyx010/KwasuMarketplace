@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Browse Listings — KWASUMarket</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -94,6 +96,7 @@
       border: none; cursor: pointer;
       padding: 0 1.4rem; border-radius: 0 10px 10px 0;
       font-size: .9rem; font-weight: 600; font-family: 'Inter', sans-serif;
+      display: flex; align-items: center; justify-content: center;
     }
     .sort-select {
       border: 2px solid rgba(255,255,255,.2);
@@ -137,6 +140,7 @@
     .filter-item:hover { background: var(--card-bg); }
     .filter-item.active { background: var(--card-bg); font-weight: 600; color: var(--green); }
     .filter-item-left { display: flex; align-items: center; gap: .6rem; }
+    .filter-item-left i { font-size: 1rem; color: var(--green); flex-shrink: 0; }
     .filter-count {
       font-size: .72rem; color: var(--muted);
       background: var(--card-bg); padding: .1rem .45rem;
@@ -175,6 +179,7 @@
       border-radius: 8px; padding: .55rem;
       font-size: .82rem; cursor: pointer;
       font-family: 'Inter', sans-serif; transition: all .2s;
+      display: flex; align-items: center; justify-content: center; gap: .4rem;
     }
     .clear-filters:hover { border-color: var(--red); color: var(--red); }
 
@@ -210,6 +215,7 @@
     .filter-tag button {
       background: none; border: none; color: rgba(255,255,255,.7);
       cursor: pointer; font-size: .9rem; line-height: 1; padding: 0;
+      display: flex; align-items: center;
     }
     .filter-tag button:hover { color: var(--white); }
 
@@ -240,6 +246,7 @@
       height: 150px; position: relative;
       display: flex; align-items: center; justify-content: center;
       font-size: 3.5rem;
+      color: var(--green);
     }
     .item-img.bg-gadgets { background: #EDF3FF; }
     .item-img.bg-food    { background: #FFF6E8; }
@@ -263,11 +270,13 @@
       width: 30px; height: 30px;
       background: var(--white); border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: .95rem; cursor: pointer; border: none;
+      font-size: 1rem; cursor: pointer; border: none;
       box-shadow: 0 2px 8px rgba(0,0,0,.12);
       transition: transform .15s;
+      color: var(--muted);
     }
     .wishlist-btn:hover { transform: scale(1.15); }
+    .wishlist-btn.saved { color: var(--red); }
 
     .item-body { padding: .9rem 1rem 1rem; }
     .item-cat {
@@ -275,7 +284,8 @@
       text-transform: uppercase; letter-spacing: .06em; margin-bottom: .25rem;
     }
     .item-name { font-weight: 600; font-size: .9rem; color: var(--ink); margin-bottom: .25rem; line-height: 1.3; }
-    .item-seller { font-size: .75rem; color: var(--muted); margin-bottom: .7rem; }
+    .item-seller { font-size: .75rem; color: var(--muted); margin-bottom: .7rem; display: flex; align-items: center; gap: .3rem; }
+    .item-seller i { font-size: .9rem; }
     .item-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .4rem; }
     .item-price { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--green); }
     .item-condition {
@@ -290,6 +300,7 @@
       font-size: .78rem; font-weight: 600; cursor: pointer;
       font-family: 'Inter', sans-serif; width: 100%;
       justify-content: center; transition: opacity .2s;
+      text-decoration: none; box-sizing: border-box;
     }
     .item-whatsapp:hover { opacity: .88; }
 
@@ -298,7 +309,7 @@
       grid-column: 1 / -1;
       text-align: center; padding: 4rem 2rem;
     }
-    .empty-state .emoji { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
+    .empty-state i.icon-lg { font-size: 3.5rem; margin-bottom: 1rem; display: block; color: var(--muted); }
     .empty-state h3 { font-family: 'Syne', sans-serif; font-size: 1.3rem; margin-bottom: .5rem; }
     .empty-state p { color: var(--muted); font-size: .9rem; }
 
@@ -368,7 +379,7 @@
   <div class="search-bar-row">
     <div class="search-wrap">
       <input type="text" id="searchInput" placeholder="Search gadgets, food, services…" oninput="filterListings()" />
-      <button class="search-btn">🔍</button>
+      <button class="search-btn"><i class="ph ph-magnifying-glass"></i></button>
     </div>
     <select class="sort-select" id="sortSelect" onchange="filterListings()">
       <option value="newest">Newest first</option>
@@ -388,35 +399,35 @@
         <div class="filter-title">Category</div>
         <div class="filter-list" id="categoryFilter">
           <div class="filter-item active" onclick="setCategory(this, 'all')">
-            <div class="filter-item-left"><span>🗂</span> All</div>
+            <div class="filter-item-left"><i class="ph ph-squares-four"></i> All</div>
             <span class="filter-count">312</span>
           </div>
           <div class="filter-item" onclick="setCategory(this, 'Gadgets')">
-            <div class="filter-item-left"><span>💻</span> Gadgets</div>
+            <div class="filter-item-left"><i class="ph ph-laptop"></i> Gadgets</div>
             <span class="filter-count">57</span>
           </div>
           <div class="filter-item" onclick="setCategory(this, 'Food')">
-            <div class="filter-item-left"><span>🍛</span> Food</div>
+            <div class="filter-item-left"><i class="ph ph-bowl-food"></i> Food</div>
             <span class="filter-count">41</span>
           </div>
           <div class="filter-item" onclick="setCategory(this, 'Services')">
-            <div class="filter-item-left"><span>🛠</span> Services</div>
+            <div class="filter-item-left"><i class="ph ph-wrench"></i> Services</div>
             <span class="filter-count">38</span>
           </div>
           <div class="filter-item" onclick="setCategory(this, 'Clothing')">
-            <div class="filter-item-left"><span>👗</span> Clothing</div>
+            <div class="filter-item-left"><i class="ph ph-t-shirt"></i> Clothing</div>
             <span class="filter-count">29</span>
           </div>
           <div class="filter-item" onclick="setCategory(this, 'Hostel')">
-            <div class="filter-item-left"><span>🏠</span> Hostel</div>
+            <div class="filter-item-left"><i class="ph ph-house"></i> Hostel</div>
             <span class="filter-count">18</span>
           </div>
           <div class="filter-item" onclick="setCategory(this, 'Printing')">
-            <div class="filter-item-left"><span>🖨</span> Printing</div>
+            <div class="filter-item-left"><i class="ph ph-printer"></i> Printing</div>
             <span class="filter-count">12</span>
           </div>
           <div class="filter-item" onclick="setCategory(this, 'Tutoring')">
-            <div class="filter-item-left"><span>✏️</span> Tutoring</div>
+            <div class="filter-item-left"><i class="ph ph-pencil-simple"></i> Tutoring</div>
             <span class="filter-count">23</span>
           </div>
         </div>
@@ -454,7 +465,7 @@
         </div>
       </div>
 
-      <button class="clear-filters" onclick="clearFilters()">✕ Clear all filters</button>
+      <button class="clear-filters" onclick="clearFilters()"><i class="ph ph-x"></i> Clear all filters</button>
 
     </aside>
 
@@ -465,8 +476,8 @@
         <p class="results-count" id="resultsCount"><strong>312</strong> listings found</p>
         <div style="display:flex; gap:.8rem; align-items:center;">
           <div class="view-toggle">
-            <button class="view-btn active" onclick="setView('grid', this)" title="Grid view">⊞</button>
-            <button class="view-btn" onclick="setView('list', this)" title="List view">☰</button>
+            <button class="view-btn active" onclick="setView('grid', this)" title="Grid view"><i class="ph ph-squares-four"></i></button>
+            <button class="view-btn" onclick="setView('list', this)" title="List view"><i class="ph ph-list"></i></button>
           </div>
         </div>
       </div>
@@ -485,30 +496,30 @@
   <script>
     // ── DATA ──
     const ALL_LISTINGS = [
-      { id:1,  emoji:'📱', cat:'Gadgets',  name:'Samsung Galaxy A14 — 64GB',       seller:'Tunde B.',    dept:'Engineering', price:68000, condition:'Fairly used', badge:'',       bg:'bg-gadgets', phone:'08012345678' },
-      { id:2,  emoji:'💻', cat:'Gadgets',  name:'HP Laptop — 8GB RAM, 256GB SSD',  seller:'Amaka O.',    dept:'Sciences',    price:85000, condition:'Good',        badge:'hot',    bg:'bg-gadgets', phone:'08023456789' },
-      { id:3,  emoji:'🎧', cat:'Gadgets',  name:'JBL Earbuds — Sealed',            seller:'Musa K.',     dept:'Finance',     price:7500,  condition:'Brand new',   badge:'new',    bg:'bg-gadgets', phone:'08034567890' },
-      { id:4,  emoji:'🖥',  cat:'Gadgets',  name:'Dell Monitor 22" — HDMI',         seller:'Seun A.',     dept:'Engineering', price:42000, condition:'Good',        badge:'',       bg:'bg-gadgets', phone:'08045678901' },
-      { id:5,  emoji:'⌨️', cat:'Gadgets',  name:'Mechanical Keyboard — USB',       seller:'Ibrahim F.',  dept:'Sciences',    price:9500,  condition:'Like new',    badge:'',       bg:'bg-gadgets', phone:'08056789012' },
-      { id:6,  emoji:'🔋', cat:'Gadgets',  name:'Power Bank — 20,000mAh Anker',    seller:'Blessing N.', dept:'Mass Comm',   price:12000, condition:'Like new',    badge:'',       bg:'bg-gadgets', phone:'08067890123' },
-      { id:7,  emoji:'🍛', cat:'Food',     name:'Jollof Rice + Chicken',           seller:'Mama Bisi',   dept:'',            price:900,   condition:'Fresh',       badge:'hot',    bg:'bg-food',    phone:'08078901234' },
-      { id:8,  emoji:'🍲', cat:'Food',     name:'Egusi Soup + Eba (takeaway)',      seller:'Aunty Shade', dept:'',            price:700,   condition:'Fresh',       badge:'',       bg:'bg-food',    phone:'08089012345' },
-      { id:9,  emoji:'🍱', cat:'Food',     name:'Fried Rice + 2 Proteins',         seller:'Mama Bisi',   dept:'',            price:1100,  condition:'Fresh',       badge:'new',    bg:'bg-food',    phone:'08090123456' },
-      { id:10, emoji:'🥘', cat:'Food',     name:'Pepper Soup (Goat Meat)',         seller:'Baba Chukwu', dept:'',            price:1200,  condition:'Fresh',       badge:'',       bg:'bg-food',    phone:'08001234567' },
-      { id:11, emoji:'☕', cat:'Food',     name:'Morning Tea + Bread & Egg',       seller:'Hajia Salma', dept:'',            price:400,   condition:'Fresh',       badge:'',       bg:'bg-food',    phone:'08012340987' },
-      { id:12, emoji:'🎨', cat:'Services', name:'Graphic Design — Flyers & Logos', seller:'Mariam O.',   dept:'Mass Comm',   price:1500,  condition:'Per job',     badge:'',       bg:'bg-service', phone:'08023451098' },
-      { id:13, emoji:'💇', cat:'Services', name:'Hair Braiding — All styles',      seller:'Fatima A.',   dept:'Sciences',    price:2000,  condition:'Per session', badge:'',       bg:'bg-service', phone:'08034562109' },
-      { id:14, emoji:'📷', cat:'Services', name:'Campus Photography — Events',     seller:'Dayo M.',     dept:'Mass Comm',   price:5000,  condition:'Per event',   badge:'',       bg:'bg-service', phone:'08045673210' },
-      { id:15, emoji:'✏️', cat:'Tutoring', name:'Maths & Stats Tutoring (100L)',   seller:'Adaeze C.',   dept:'Sciences',    price:1000,  condition:'Per hour',    badge:'',       bg:'bg-service', phone:'08056784321' },
-      { id:16, emoji:'📊', cat:'Tutoring', name:'FIN 201 — Financial Accounting',  seller:'Ridwan K.',   dept:'Finance',     price:800,   condition:'Per hour',    badge:'new',    bg:'bg-service', phone:'08067895432' },
-      { id:17, emoji:'👗', cat:'Clothing', name:'KWASU Hoodie — Size L (Green)',   seller:'Ahmed S.',    dept:'Finance',     price:5500,  condition:'Brand new',   badge:'new',    bg:'bg-cloth',   phone:'08078906543' },
-      { id:18, emoji:'👟', cat:'Clothing', name:'Nike Air Max — Size 43',          seller:'Emeka T.',    dept:'Engineering', price:18000, condition:'Fairly used', badge:'',       bg:'bg-cloth',   phone:'08089017654' },
-      { id:19, emoji:'👔', cat:'Clothing', name:'Corporate Shirt (unisex) — M/L',  seller:'Yemi O.',     dept:'Law',         price:3200,  condition:'Brand new',   badge:'',       bg:'bg-cloth',   phone:'08090128765' },
-      { id:20, emoji:'🏠', cat:'Hostel',   name:'Single Room — Hostel C (self-contain)', seller:'Ridwan K.', dept:'Finance', price:45000, condition:'Per session', badge:'hot',   bg:'bg-hostel',  phone:'08001239876' },
-      { id:21, emoji:'🛏', cat:'Hostel',   name:'Room to Share — 2 slots left',   seller:'Ngozi B.',    dept:'Sciences',    price:22000, condition:'Per session', badge:'',       bg:'bg-hostel',  phone:'08012340876' },
-      { id:22, emoji:'🖨', cat:'Printing', name:'Binding & Printing — Same day',   seller:'Yusuf P.',    dept:'',            price:30,    condition:'Per page',    badge:'',       bg:'bg-print',   phone:'08023451876' },
-      { id:23, emoji:'📄', cat:'Printing', name:'Project Printing & Spiral Bind', seller:'Yusuf P.',    dept:'',            price:500,   condition:'Per copy',    badge:'',       bg:'bg-print',   phone:'08034562876' },
-      { id:24, emoji:'🔌', cat:'Gadgets',  name:'Extension Box — 4-way socket',   seller:'Chidi U.',    dept:'Engineering', price:3500,  condition:'Good',        badge:'',       bg:'bg-gadgets', phone:'08045673876' },
+      { id:1,  icon:'device-mobile', cat:'Gadgets',  name:'Samsung Galaxy A14 — 64GB',       seller:'Tunde B.',    dept:'Engineering', price:68000, condition:'Fairly used', badge:'',       bg:'bg-gadgets', phone:'08012345678' },
+      { id:2,  icon:'laptop',        cat:'Gadgets',  name:'HP Laptop — 8GB RAM, 256GB SSD',  seller:'Amaka O.',    dept:'Sciences',    price:85000, condition:'Good',        badge:'hot',    bg:'bg-gadgets', phone:'08023456789' },
+      { id:3,  icon:'headphones',    cat:'Gadgets',  name:'JBL Earbuds — Sealed',            seller:'Musa K.',     dept:'Finance',     price:7500,  condition:'Brand new',   badge:'new',    bg:'bg-gadgets', phone:'08034567890' },
+      { id:4,  icon:'desktop',       cat:'Gadgets',  name:'Dell Monitor 22" — HDMI',         seller:'Seun A.',     dept:'Engineering', price:42000, condition:'Good',        badge:'',       bg:'bg-gadgets', phone:'08045678901' },
+      { id:5,  icon:'keyboard',      cat:'Gadgets',  name:'Mechanical Keyboard — USB',       seller:'Ibrahim F.',  dept:'Sciences',    price:9500,  condition:'Like new',    badge:'',       bg:'bg-gadgets', phone:'08056789012' },
+      { id:6,  icon:'battery-full',  cat:'Gadgets',  name:'Power Bank — 20,000mAh Anker',    seller:'Blessing N.', dept:'Mass Comm',   price:12000, condition:'Like new',    badge:'',       bg:'bg-gadgets', phone:'08067890123' },
+      { id:7,  icon:'bowl-food',     cat:'Food',     name:'Jollof Rice + Chicken',           seller:'Mama Bisi',   dept:'',            price:900,   condition:'Fresh',       badge:'hot',    bg:'bg-food',    phone:'08078901234' },
+      { id:8,  icon:'cooking-pot',   cat:'Food',     name:'Egusi Soup + Eba (takeaway)',      seller:'Aunty Shade', dept:'',            price:700,   condition:'Fresh',       badge:'',       bg:'bg-food',    phone:'08089012345' },
+      { id:9,  icon:'fork-knife',    cat:'Food',     name:'Fried Rice + 2 Proteins',         seller:'Mama Bisi',   dept:'',            price:1100,  condition:'Fresh',       badge:'new',    bg:'bg-food',    phone:'08090123456' },
+      { id:10, icon:'cooking-pot',   cat:'Food',     name:'Pepper Soup (Goat Meat)',         seller:'Baba Chukwu', dept:'',            price:1200,  condition:'Fresh',       badge:'',       bg:'bg-food',    phone:'08001234567' },
+      { id:11, icon:'coffee',        cat:'Food',     name:'Morning Tea + Bread & Egg',       seller:'Hajia Salma', dept:'',            price:400,   condition:'Fresh',       badge:'',       bg:'bg-food',    phone:'08012340987' },
+      { id:12, icon:'palette',       cat:'Services', name:'Graphic Design — Flyers & Logos', seller:'Mariam O.',   dept:'Mass Comm',   price:1500,  condition:'Per job',     badge:'',       bg:'bg-service', phone:'08023451098' },
+      { id:13, icon:'scissors',      cat:'Services', name:'Hair Braiding — All styles',      seller:'Fatima A.',   dept:'Sciences',    price:2000,  condition:'Per session', badge:'',       bg:'bg-service', phone:'08034562109' },
+      { id:14, icon:'camera',        cat:'Services', name:'Campus Photography — Events',     seller:'Dayo M.',     dept:'Mass Comm',   price:5000,  condition:'Per event',   badge:'',       bg:'bg-service', phone:'08045673210' },
+      { id:15, icon:'pencil-simple', cat:'Tutoring', name:'Maths & Stats Tutoring (100L)',   seller:'Adaeze C.',   dept:'Sciences',    price:1000,  condition:'Per hour',    badge:'',       bg:'bg-service', phone:'08056784321' },
+      { id:16, icon:'chart-bar',     cat:'Tutoring', name:'FIN 201 — Financial Accounting',  seller:'Ridwan K.',   dept:'Finance',     price:800,   condition:'Per hour',    badge:'new',    bg:'bg-service', phone:'08067895432' },
+      { id:17, icon:'t-shirt',       cat:'Clothing', name:'KWASU Hoodie — Size L (Green)',   seller:'Ahmed S.',    dept:'Finance',     price:5500,  condition:'Brand new',   badge:'new',    bg:'bg-cloth',   phone:'08078906543' },
+      { id:18, icon:'sneaker',       cat:'Clothing', name:'Nike Air Max — Size 43',          seller:'Emeka T.',    dept:'Engineering', price:18000, condition:'Fairly used', badge:'',       bg:'bg-cloth',   phone:'08089017654' },
+      { id:19, icon:'coat-hanger',   cat:'Clothing', name:'Corporate Shirt (unisex) — M/L',  seller:'Yemi O.',     dept:'Law',         price:3200,  condition:'Brand new',   badge:'',       bg:'bg-cloth',   phone:'08090128765' },
+      { id:20, icon:'house',         cat:'Hostel',   name:'Single Room — Hostel C (self-contain)', seller:'Ridwan K.', dept:'Finance', price:45000, condition:'Per session', badge:'hot',   bg:'bg-hostel',  phone:'08001239876' },
+      { id:21, icon:'bed',           cat:'Hostel',   name:'Room to Share — 2 slots left',   seller:'Ngozi B.',    dept:'Sciences',    price:22000, condition:'Per session', badge:'',       bg:'bg-hostel',  phone:'08012340876' },
+      { id:22, icon:'printer',       cat:'Printing', name:'Binding & Printing — Same day',   seller:'Yusuf P.',    dept:'',            price:30,    condition:'Per page',    badge:'',       bg:'bg-print',   phone:'08023451876' },
+      { id:23, icon:'file-text',     cat:'Printing', name:'Project Printing & Spiral Bind', seller:'Yusuf P.',    dept:'',            price:500,   condition:'Per copy',    badge:'',       bg:'bg-print',   phone:'08034562876' },
+      { id:24, icon:'plug',          cat:'Gadgets',  name:'Extension Box — 4-way socket',   seller:'Chidi U.',    dept:'Engineering', price:3500,  condition:'Good',        badge:'',       bg:'bg-gadgets', phone:'08045673876' },
     ];
 
     let currentCategory = 'all';
@@ -583,13 +594,13 @@
       const tags = document.getElementById('activeTags');
       tags.innerHTML = '';
       if (currentCategory !== 'all') {
-        tags.innerHTML += `<div class="filter-tag">${currentCategory} <button onclick="clearCat()">×</button></div>`;
+        tags.innerHTML += `<div class="filter-tag">${currentCategory} <button onclick="clearCat()"><i class="ph ph-x"></i></button></div>`;
       }
 
       if (page.length === 0) {
         grid.innerHTML = `
           <div class="empty-state">
-            <span class="emoji">🔍</span>
+            <i class="ph ph-magnifying-glass icon-lg"></i>
             <h3>No listings found</h3>
             <p>Try changing your filters or search term.</p>
           </div>`;
@@ -600,22 +611,22 @@
       grid.innerHTML = page.map(item => `
         <div class="item-card" onclick="window.location.href='kwasu-item.html'">
           <div class="item-img ${item.bg}">
-            ${item.emoji}
+            <i class="ph ph-${item.icon}"></i>
             ${item.badge ? `<span class="item-badge badge-${item.badge}">${item.badge}</span>` : ''}
-            <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWish(this)" title="Save">🤍</button>
+            <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWish(this)" title="Save"><i class="ph ph-heart"></i></button>
           </div>
           <div class="item-body">
             <div class="item-cat">${item.cat}</div>
             <div class="item-name">${item.name}</div>
-            <div class="item-seller">👤 ${item.seller}${item.dept ? ' · ' + item.dept : ''}</div>
+            <div class="item-seller"><i class="ph ph-user-circle"></i> ${item.seller}${item.dept ? ' · ' + item.dept : ''}</div>
             <div class="item-footer">
               <span class="item-price">${formatPrice(item.price)}</span>
               <span class="item-condition">${item.condition}</span>
             </div>
-            <button class="item-whatsapp">
+            <a class="item-whatsapp" href="#">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
               Chat on WhatsApp
-            </button>
+            </a>
           </div>
         </div>
       `).join('');
@@ -653,12 +664,9 @@
     }
 
     function toggleWish(btn) {
-      btn.textContent = btn.textContent === '🤍' ? '❤️' : '🤍';
-    }
-
-    function openWhatsApp(phone, name) {
-      const msg = encodeURIComponent(`Hi, I saw your listing on KWASUMarket: "${name}". Is it still available?`);
-      window.open(`https://wa.me/234${phone.slice(1)}?text=${msg}`, '_blank');
+      const icon = btn.querySelector('i');
+      const saved = btn.classList.toggle('saved');
+      icon.className = saved ? 'ph-fill ph-heart' : 'ph ph-heart';
     }
 
     function toggleNav() {

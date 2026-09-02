@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KWASU Marketplace — Buy, Sell & Connect on Campus</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -99,6 +101,7 @@
       border-radius: 100px;
       margin-bottom: 1.4rem;
     }
+    .hero-eyebrow i { font-size: 1rem; }
     .hero-title {
       font-family: 'Syne', sans-serif;
       font-size: clamp(2.2rem, 4.5vw, 3.4rem);
@@ -178,7 +181,7 @@
       0%,100% { transform: translateY(0); }
       50% { transform: translateY(-6px); }
     }
-    .card-emoji { font-size: 2rem; }
+    .card-emoji { font-size: 2rem; color: var(--green); width: 2.2rem; text-align: center; flex-shrink: 0; }
     .card-info { flex: 1; }
     .card-title { font-weight: 600; font-size: .9rem; color: var(--ink); }
     .card-meta { font-size: .78rem; color: var(--muted); }
@@ -225,6 +228,7 @@
       border-radius: 0 10px 10px 0;
       font-size: .95rem; font-weight: 600;
       font-family: 'Inter', sans-serif;
+      display: flex; align-items: center; gap: .4rem;
       transition: background .2s;
     }
     .search-btn:hover { background: var(--green-lt); }
@@ -240,6 +244,7 @@
       border-radius: 100px;
       font-size: .8rem; font-weight: 500;
       cursor: pointer;
+      display: inline-flex; align-items: center; gap: .35rem;
       transition: all .15s;
     }
     .chip:hover, .chip.active {
@@ -284,7 +289,8 @@
     }
     .cat-card:hover .cat-name { color: var(--white); }
     .cat-card:hover .cat-count { color: rgba(255,255,255,.7); }
-    .cat-icon { font-size: 2.2rem; margin-bottom: .7rem; display: block; }
+    .cat-card:hover .cat-icon { color: var(--gold); }
+    .cat-icon { font-size: 2.2rem; margin-bottom: .7rem; display: block; color: var(--green); transition: color .2s; }
     .cat-name { font-weight: 600; font-size: .9rem; color: var(--ink); }
     .cat-count { font-size: .75rem; color: var(--muted); margin-top: .2rem; }
 
@@ -318,6 +324,7 @@
       height: 160px;
       display: flex; align-items: center; justify-content: center;
       font-size: 4rem;
+      color: var(--green);
       position: relative;
     }
     .item-img.bg-books   { background: #EEF7F2; }
@@ -337,7 +344,8 @@
       text-transform: uppercase; letter-spacing: .06em; margin-bottom: .4rem;
     }
     .item-name { font-weight: 600; font-size: .95rem; color: var(--ink); margin-bottom: .4rem; line-height: 1.4; }
-    .item-seller { font-size: .78rem; color: var(--muted); margin-bottom: 1rem; }
+    .item-seller { font-size: .78rem; color: var(--muted); margin-bottom: 1rem; display: flex; align-items: center; gap: .35rem; }
+    .item-seller i { font-size: .95rem; }
     .item-footer { display: flex; align-items: center; justify-content: space-between; }
     .item-price {
       font-family: 'Syne', sans-serif;
@@ -364,6 +372,7 @@
       border-radius: 14px;
       display: flex; align-items: center; justify-content: center;
       font-size: 1.6rem;
+      color: var(--green);
     }
     .how-title { font-weight: 700; font-size: 1.05rem; color: var(--ink); line-height: 1.4; }
     .how-desc { font-size: .9rem; color: var(--muted); line-height: 1.7; }
@@ -377,11 +386,12 @@
       gap: 2rem; flex-wrap: wrap;
       position: relative; overflow: hidden;
     }
-    .cta-banner::before {
-      content: '🛒';
+    .cta-banner-icon {
       position: absolute; right: 5%; top: 50%;
       transform: translateY(-50%);
-      font-size: 8rem; opacity: .08;
+      font-size: 8rem; opacity: .1;
+      color: var(--white);
+      pointer-events: none;
     }
     .cta-text h2 {
       font-family: 'Syne', sans-serif;
@@ -418,7 +428,8 @@
       display: flex; justify-content: space-between; align-items: center;
       flex-wrap: wrap; gap: 1rem;
     }
-    .footer-bottom span { font-size: .8rem; }
+    .footer-bottom span { font-size: .8rem; display: inline-flex; align-items: center; gap: .3rem; }
+    .footer-bottom i { color: #E85D5D; font-size: .9rem; }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
@@ -462,7 +473,7 @@
   <section class="hero">
     <div class="hero-content">
       <div class="hero-eyebrow">
-        📍 Kwara State University, Malete
+        <i class="ph ph-map-pin"></i> Kwara State University, Malete
       </div>
       <h1 class="hero-title">
         Buy. Sell.<br><em>Chop.</em> Get Help.<br>All on Campus.
@@ -493,7 +504,7 @@
     <!-- Floating preview cards -->
     <div class="hero-visual">
       <div class="listing-card-preview">
-        <span class="card-emoji">🎧</span>
+        <i class="ph ph-headphones card-emoji"></i>
         <div class="card-info">
           <div class="card-title">JBL Earbuds — Brand new</div>
           <div class="card-meta">Finance Dept • Sealed</div>
@@ -503,7 +514,7 @@
         </div>
       </div>
       <div class="listing-card-preview">
-        <span class="card-emoji">💻</span>
+        <i class="ph ph-laptop card-emoji"></i>
         <div class="card-info">
           <div class="card-title">HP Laptop — 8GB RAM</div>
           <div class="card-meta">Level 300 student</div>
@@ -513,7 +524,7 @@
         </div>
       </div>
       <div class="listing-card-preview">
-        <span class="card-emoji">🍛</span>
+        <i class="ph ph-bowl-food card-emoji"></i>
         <div class="card-info">
           <div class="card-title">Jollof + Protein</div>
           <div class="card-meta">Hostel B Kitchen • Today</div>
@@ -529,15 +540,15 @@
   <div class="search-section">
     <div class="search-wrap">
       <input type="text" id="homeSearch" placeholder="Search for gadgets, food, services, hostel rooms…" onkeydown="if(event.key==='Enter') goSearch()" />
-      <button class="search-btn" onclick="goSearch()">Search</button>
+      <button class="search-btn" onclick="goSearch()"><i class="ph ph-magnifying-glass"></i> Search</button>
     </div>
     <div class="filter-chips">
       <span class="chip active" onclick="setActive(this, 'all')">All</span>
-      <span class="chip" onclick="setActive(this, 'Gadgets')">💻 Gadgets</span>
-      <span class="chip" onclick="setActive(this, 'Food')">🍛 Food</span>
-      <span class="chip" onclick="setActive(this, 'Services')">🛠 Services</span>
-      <span class="chip" onclick="setActive(this, 'Clothing')">👗 Clothing</span>
-      <span class="chip" onclick="setActive(this, 'Hostel')">🏠 Hostel</span>
+      <span class="chip" onclick="setActive(this, 'Gadgets')"><i class="ph ph-laptop"></i> Gadgets</span>
+      <span class="chip" onclick="setActive(this, 'Food')"><i class="ph ph-bowl-food"></i> Food</span>
+      <span class="chip" onclick="setActive(this, 'Services')"><i class="ph ph-wrench"></i> Services</span>
+      <span class="chip" onclick="setActive(this, 'Clothing')"><i class="ph ph-t-shirt"></i> Clothing</span>
+      <span class="chip" onclick="setActive(this, 'Hostel')"><i class="ph ph-house"></i> Hostel</span>
     </div>
   </div>
 
@@ -549,37 +560,37 @@
     </div>
     <div class="categories-grid">
       <a href="kwasu-listings.html?cat=Gadgets" class="cat-card">
-        <span class="cat-icon">💻</span>
+        <i class="ph ph-laptop cat-icon"></i>
         <div class="cat-name">Gadgets</div>
         <div class="cat-count">57 listings</div>
       </a>
       <a href="kwasu-listings.html?cat=Food" class="cat-card">
-        <span class="cat-icon">🍛</span>
+        <i class="ph ph-bowl-food cat-icon"></i>
         <div class="cat-name">Food</div>
         <div class="cat-count">41 listings</div>
       </a>
       <a href="kwasu-listings.html?cat=Services" class="cat-card">
-        <span class="cat-icon">🛠</span>
+        <i class="ph ph-wrench cat-icon"></i>
         <div class="cat-name">Services</div>
         <div class="cat-count">38 listings</div>
       </a>
       <a href="kwasu-listings.html?cat=Clothing" class="cat-card">
-        <span class="cat-icon">👗</span>
+        <i class="ph ph-t-shirt cat-icon"></i>
         <div class="cat-name">Clothing</div>
         <div class="cat-count">29 listings</div>
       </a>
       <a href="kwasu-listings.html?cat=Hostel" class="cat-card">
-        <span class="cat-icon">🏠</span>
+        <i class="ph ph-house cat-icon"></i>
         <div class="cat-name">Hostel</div>
         <div class="cat-count">18 listings</div>
       </a>
       <a href="kwasu-listings.html?cat=Printing" class="cat-card">
-        <span class="cat-icon">🖨</span>
+        <i class="ph ph-printer cat-icon"></i>
         <div class="cat-name">Printing</div>
         <div class="cat-count">12 listings</div>
       </a>
       <a href="kwasu-listings.html?cat=Tutoring" class="cat-card">
-        <span class="cat-icon">✏️</span>
+        <i class="ph ph-pencil-simple cat-icon"></i>
         <div class="cat-name">Tutoring</div>
         <div class="cat-count">23 listings</div>
       </a>
@@ -599,13 +610,13 @@
 
       <div class="item-card">
         <div class="item-img bg-service">
-          🏠
+          <i class="ph ph-house"></i>
           <span class="item-badge">Just added</span>
         </div>
         <div class="item-body">
           <div class="item-cat">Hostel</div>
           <div class="item-name">Single Room — Hostel C (self-contain)</div>
-          <div class="item-seller">👤 Ridwan K. · Finance Dept</div>
+          <div class="item-seller"><i class="ph ph-user-circle"></i> Ridwan K. · Finance Dept</div>
           <div class="item-footer">
             <span class="item-price">₦45,000</span>
             <span class="item-condition">Per session</span>
@@ -615,12 +626,12 @@
 
       <div class="item-card">
         <div class="item-img bg-gadgets">
-          📱
+          <i class="ph ph-device-mobile"></i>
         </div>
         <div class="item-body">
           <div class="item-cat">Gadgets</div>
           <div class="item-name">Samsung Galaxy A14 — 64GB</div>
-          <div class="item-seller">👤 Tunde B. · Engineering</div>
+          <div class="item-seller"><i class="ph ph-user-circle"></i> Tunde B. · Engineering</div>
           <div class="item-footer">
             <span class="item-price">₦68,000</span>
             <span class="item-condition">Fairly used</span>
@@ -630,13 +641,13 @@
 
       <div class="item-card">
         <div class="item-img bg-food">
-          🍛
+          <i class="ph ph-bowl-food"></i>
           <span class="item-badge">Today</span>
         </div>
         <div class="item-body">
           <div class="item-cat">Food</div>
           <div class="item-name">Jollof Rice + Chicken</div>
-          <div class="item-seller">👤 Mama Bisi · Hostel B</div>
+          <div class="item-seller"><i class="ph ph-user-circle"></i> Mama Bisi · Hostel B</div>
           <div class="item-footer">
             <span class="item-price">₦900</span>
             <span class="item-condition">Fresh</span>
@@ -646,12 +657,12 @@
 
       <div class="item-card">
         <div class="item-img bg-service">
-          🎨
+          <i class="ph ph-palette"></i>
         </div>
         <div class="item-body">
           <div class="item-cat">Services</div>
           <div class="item-name">Graphic Design — Flyers & Logos</div>
-          <div class="item-seller">👤 Mariam O. · Mass Comm</div>
+          <div class="item-seller"><i class="ph ph-user-circle"></i> Mariam O. · Mass Comm</div>
           <div class="item-footer">
             <span class="item-price">₦1,500</span>
             <span class="item-condition">Per job</span>
@@ -661,12 +672,12 @@
 
       <div class="item-card">
         <div class="item-img bg-service">
-          👗
+          <i class="ph ph-t-shirt"></i>
         </div>
         <div class="item-body">
           <div class="item-cat">Clothing</div>
           <div class="item-name">KWASU Hoodie — Size L (Green)</div>
-          <div class="item-seller">👤 Ahmed S. · Finance Dept</div>
+          <div class="item-seller"><i class="ph ph-user-circle"></i> Ahmed S. · Finance Dept</div>
           <div class="item-footer">
             <span class="item-price">₦5,500</span>
             <span class="item-condition">Brand new</span>
@@ -676,12 +687,12 @@
 
       <div class="item-card">
         <div class="item-img bg-gadgets">
-          🖨
+          <i class="ph ph-printer"></i>
         </div>
         <div class="item-body">
           <div class="item-cat">Services</div>
           <div class="item-name">Binding & Printing Services</div>
-          <div class="item-seller">👤 Yusuf P. · Near Gate 1</div>
+          <div class="item-seller"><i class="ph ph-user-circle"></i> Yusuf P. · Near Gate 1</div>
           <div class="item-footer">
             <span class="item-price">₦30/page</span>
             <span class="item-condition">Same day</span>
@@ -700,22 +711,22 @@
     </div>
     <div class="how-grid">
       <div class="how-card">
-        <div class="how-icon">📝</div>
+        <div class="how-icon"><i class="ph ph-note-pencil"></i></div>
         <div class="how-title">Create a free listing</div>
         <div class="how-desc">Post what you're selling or what service you offer in under 2 minutes. No account needed to start.</div>
       </div>
       <div class="how-card">
-        <div class="how-icon">🔍</div>
+        <div class="how-icon"><i class="ph ph-magnifying-glass"></i></div>
         <div class="how-title">Buyers find you</div>
         <div class="how-desc">KWASU students searching for what you have will see your listing and reach out directly via WhatsApp.</div>
       </div>
       <div class="how-card">
-        <div class="how-icon">🤝</div>
+        <div class="how-icon"><i class="ph ph-handshake"></i></div>
         <div class="how-title">Meet on campus</div>
         <div class="how-desc">Arrange a safe handover anywhere on campus — library, hostel, or the SUB. No shipping, no stress.</div>
       </div>
       <div class="how-card">
-        <div class="how-icon">💸</div>
+        <div class="how-icon"><i class="ph ph-money"></i></div>
         <div class="how-title">Pay & close the deal</div>
         <div class="how-desc">Pay cash or transfer. The deal is between you and the seller — zero commission, zero fees.</div>
       </div>
@@ -724,6 +735,7 @@
 
   <!-- CTA BANNER -->
   <div class="cta-banner">
+    <i class="ph ph-shopping-cart-simple cta-banner-icon"></i>
     <div class="cta-text">
       <h2>Got something to sell?</h2>
       <p>Post your item for free and reach hundreds of KWASU students today.</p>
@@ -762,7 +774,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 KWASUMarket. Made with ❤️ in Malete.</span>
+      <span>© 2026 KWASUMarket. Made with <i class="ph-fill ph-heart"></i> in Malete.</span>
       <span>For KWASU students only.</span>
     </div>
   </footer>
